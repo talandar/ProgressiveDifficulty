@@ -2,6 +2,8 @@ package derpatiel.progressivediff;
 
 import derpatiel.progressivediff.proxy.CommonProxy;
 import net.minecraft.init.Blocks;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
