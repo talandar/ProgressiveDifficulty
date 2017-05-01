@@ -14,7 +14,7 @@ public class DepthControl extends DifficultyControl {
     @Override
     public int getChangeForEvent(LivingSpawnEvent.CheckSpawn event, int currentDifficulty) {
         int depth = 64-(int)event.getY();
-        if(depth>0){
+        if(depth<=0){
             return currentDifficulty;
         }else{
             return currentDifficulty+(int)(depth * addedPerBlock);
