@@ -3,6 +3,8 @@ package derpatiel.progressivediff.modifiers;
 import derpatiel.progressivediff.DifficultyModifer;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -12,14 +14,14 @@ import net.minecraft.potion.PotionEffect;
  */
 public class AddHealthModifier extends DifficultyModifer {
 
-    private int minAddedHearts;
-    private int maxAddedHearts;
-    private int diffCostPerHeart;
+    private int minAddedHealth;
+    private int maxAddedHealth;
+    private int diffCostPerHealth;
 
-    public AddHealthModifier(int minAddedHearts, int maxAddedHearts, int diffCostPerHeart){
-        this.minAddedHearts = minAddedHearts;
-        this.maxAddedHearts = maxAddedHearts;
-        this.diffCostPerHeart = diffCostPerHeart;
+    public AddHealthModifier(int minAddedHealth, int maxAddedHealth, int diffCostPerHealth){
+        this.minAddedHealth = minAddedHealth;
+        this.maxAddedHealth = maxAddedHealth;
+        this.diffCostPerHealth = diffCostPerHealth;
     }
 
 
@@ -35,6 +37,10 @@ public class AddHealthModifier extends DifficultyModifer {
 
     @Override
     public void makeChange(int changeValue, EntityLivingBase entity) {
-        entity.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 2000, 3, false, true));
+        int addedHealth = changeValue/diffCostPerHealth;
+        IAttributeInstance maxHealthAttribute = entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
+        maxHealthAttribute.setBaseValue(maxHealthAttribute.getBaseValue() + addedHealth);
+        entity.setHealth(entity.getMaxHealth());
+
     }
 }

@@ -11,9 +11,6 @@ import static derpatiel.progressivediff.DifficultyConfiguration.*;
 
 public class DifficultyManager {
 
-    //temp
-    private static AddHealthModifier addHealthMod = new AddHealthModifier(0,0,0);
-
     private static final List<DifficultyControl> controls = Lists.newArrayList();
     private static final List<DifficultyModifer> modifiers = Lists.newArrayList();
 
@@ -42,7 +39,8 @@ public class DifficultyManager {
 
     public static void makeDifficultyChanges(LivingSpawnEvent event, int determinedDifficulty){
         if (determinedDifficulty > 100){
-            addHealthMod.makeChange(10,event.getEntityLiving());
+            //for now, just put it all on the first one
+            modifiers.get(0).makeChange(determinedDifficulty-100,event.getEntityLiving());
         }
 
     }
