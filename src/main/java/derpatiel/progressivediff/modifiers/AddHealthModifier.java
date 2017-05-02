@@ -1,18 +1,14 @@
 package derpatiel.progressivediff.modifiers;
 
-import derpatiel.progressivediff.DifficultyModifer;
-import net.minecraft.entity.EntityLiving;
+import derpatiel.progressivediff.DifficultyModifier;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.init.MobEffects;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 
 /**
  * Created by Jim on 4/30/2017.
  */
-public class AddHealthModifier extends DifficultyModifer {
+public class AddHealthModifier extends DifficultyModifier {
 
     private int minAddedHealth;
     private int maxAddedHealth;
@@ -27,12 +23,12 @@ public class AddHealthModifier extends DifficultyModifer {
 
     @Override
     public int getMinChange() {
-        return 0;
+        return minAddedHealth * diffCostPerHealth;
     }
 
     @Override
     public int getMaxChange() {
-        return 1000;
+        return maxAddedHealth * diffCostPerHealth;
     }
 
     @Override

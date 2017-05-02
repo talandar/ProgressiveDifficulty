@@ -4,7 +4,9 @@ import derpatiel.progressivediff.util.LOG;
 import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class EventHandler {
 
@@ -18,24 +20,17 @@ public class EventHandler {
     //used for every spawn.  Including ones that are later canceled for light or similar.
     @SubscribeEvent
     public void onEntitySpawn(LivingSpawnEvent.CheckSpawn checkSpawnEvent){
-        //LOG.info("onEntitySpawn:" + checkSpawnEvent.getEntityLiving().getName() + ", at " + checkSpawnEvent.getX() + ", " + checkSpawnEvent.getY() + ", " + checkSpawnEvent.getZ());
-        //checkSpawnEvent.setResult(Event.Result.DENY);
-        //if(checkSpawnEvent.isCancelable()) {
-        //    checkSpawnEvent.setCanceled(true);
-        //}
-        //how to allow spawner ones but not default ones...
-        int difficulty = DifficultyManager.determineDifficultyForSpawnEvent(checkSpawnEvent);
-        DifficultyManager.makeDifficultyChanges(checkSpawnEvent,difficulty);
+        if(checkSpawnEvent.getEntityLiving() instanceof  EntityLiving) {
+            DifficultyManager.onCheckSpawnEvent(checkSpawnEvent);
+        }
     }
 
     //used by spawners only, after onEntitySpawn
     @SubscribeEvent
     public void onSpecialSpawn(LivingSpawnEvent.SpecialSpawn specialSpawnEvent){
-        //LOG.info("onSpecialSpawn:" + specialSpawnEvent.getEntityLiving().getName() + ", at " + specialSpawnEvent.getX() + ", " + specialSpawnEvent.getY() + ", " + specialSpawnEvent.getZ());
-        //specialSpawnEvent.setResult(Event.Result.ALLOW);
-        //if(specialSpawnEvent.isCanceled()){
-        //    specialSpawnEvent.setCanceled(false);
-        //}
+        if(specialSpawnEvent.getEntity() instanceof EntityLiving) {
+            DifficultyManager.onSpecialSpawnEvent(specialSpawnEvent);
+        }
     }
 
     @SubscribeEvent
@@ -43,7 +38,12 @@ public class EventHandler {
         //only catch if its EntityLiving - not a player but is a living entity
         //this lets us skip things like fallingsand entities, arrows, fx, etc
         if(joinWorldEvent.getEntity() instanceof EntityLiving) {
-            //LOG.info("onJoinWorld:" + joinWorldEvent.getEntity().getName() + ", at " + joinWorldEvent.getEntity().getPosition().getX() + ", " + joinWorldEvent.getEntity().getPosition().getY() + ", " + joinWorldEvent.getEntity().getPosition().getZ());
+            DifficultyManager.onJoinWorldEvent(joinWorldEvent);
         }
+    }
+
+    @SubscribeEvent
+    public void onWorldTick(TickEvent.WorldTickEvent event){
+        DifficultyManager.onWorldTick();
     }
 }

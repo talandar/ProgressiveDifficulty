@@ -1,6 +1,7 @@
 package derpatiel.progressivediff.controls;
 
 import derpatiel.progressivediff.DifficultyControl;
+import derpatiel.progressivediff.SpawnEventDetails;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 
 public class DepthControl extends DifficultyControl {
@@ -12,8 +13,8 @@ public class DepthControl extends DifficultyControl {
     }
 
     @Override
-    public int getChangeForEvent(LivingSpawnEvent.CheckSpawn event, int currentDifficulty) {
-        int depth = 64-(int)event.getY();
+    public int getChangeForSpawn(SpawnEventDetails details, int currentDifficulty) {
+        int depth = 64-(int)details.entity.getPosition().getY();
         if(depth<=0){
             return currentDifficulty;
         }else{
