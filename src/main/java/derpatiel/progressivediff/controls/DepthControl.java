@@ -17,18 +17,13 @@ public class DepthControl extends DifficultyControl {
     }
 
     @Override
-    public int getChangeForSpawn(SpawnEventDetails details, int currentDifficulty) {
+    public int getChangeForSpawn(SpawnEventDetails details) {
         int depth = 64-(int)details.entity.getPosition().getY();
         if(depth<=0){
-            return currentDifficulty;
+            return 0;
         }else{
-            return currentDifficulty+(int)(depth * addedPerBlock);
+            return (int)(depth * addedPerBlock);
         }
-    }
-
-    @Override
-    public int getSortWeight() {
-        return 1;
     }
 
     public static void readConfig(Configuration config) {

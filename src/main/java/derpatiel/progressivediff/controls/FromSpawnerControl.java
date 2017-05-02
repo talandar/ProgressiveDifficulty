@@ -19,13 +19,8 @@ public class FromSpawnerControl extends DifficultyControl {
     }
 
     @Override
-    public int getChangeForSpawn(SpawnEventDetails details, int currentDifficulty) {
-        return currentDifficulty + (details.fromSpawner ? addedDifficulty : 0);
-    }
-
-    @Override
-    public int getSortWeight() {
-        return 1;
+    public int getChangeForSpawn(SpawnEventDetails details) {
+        return details.fromSpawner ? addedDifficulty : 0;
     }
 
     public static void readConfig(Configuration config) {

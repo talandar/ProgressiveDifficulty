@@ -44,6 +44,6 @@ public class EventHandler {
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event){
-        DifficultyManager.onWorldTick();
+        DifficultyManager.onWorldTick(event.world.provider.getDimension());
     }
 }
