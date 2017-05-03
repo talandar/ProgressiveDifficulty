@@ -2,6 +2,7 @@ package derpatiel.progressivediff.proxy;
 
 
 import derpatiel.progressivediff.DifficultyConfiguration;
+import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.EventHandler;
 import derpatiel.progressivediff.ProgressiveDifficulty;
 import derpatiel.progressivediff.network.PacketHandler;
@@ -29,6 +30,7 @@ public class CommonProxy {
 
     public void postInit(FMLPostInitializationEvent event) {
         LOG.info("postInit COMMON");
+        DifficultyManager.generateWeightMap();
     }
 
 }

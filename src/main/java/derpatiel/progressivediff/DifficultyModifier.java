@@ -9,4 +9,5 @@ public abstract class DifficultyModifier {
     public abstract void makeChange(int numInstances, EntityLivingBase entity);
     public abstract int costPerChange();
     public abstract double getWeight();
+    public abstract String getIdentifier();
 }

@@ -44,6 +44,11 @@ public class AddResistanceModifier extends DifficultyModifier {
         return selectionWeight;
     }
 
+    @Override
+    public String getIdentifier() {
+        return "RESISTANCE";
+    }
+
     public static void readConfig(Configuration config) {
         Property addResistanceModifierEnabledProp = config.get(DifficultyConfiguration.CATEGORY_MODIFIERS,
                 "EnableAddResistanceModifier",true,"Enable the add resistance modifier.  This adds the resistance potion effect to mobs on spawn.");

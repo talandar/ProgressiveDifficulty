@@ -44,6 +44,11 @@ public class AddHealthModifier extends DifficultyModifier {
         return selectionWeight;
     }
 
+    @Override
+    public String getIdentifier() {
+        return "HEALTH";
+    }
+
     public static void readConfig(Configuration config){
         Property addHealthModifierEnabledProp = config.get(DifficultyConfiguration.CATEGORY_MODIFIERS,
                 "EnableAddHealthModifier",true,"Enable the add health modifier.  This adds health to mobs on spawn.");

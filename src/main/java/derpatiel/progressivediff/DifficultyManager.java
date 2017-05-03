@@ -3,21 +3,23 @@ package derpatiel.progressivediff;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import derpatiel.progressivediff.util.LOG;
 import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static derpatiel.progressivediff.DifficultyConfiguration.*;
 
 public class DifficultyManager {
 
+    private static double[] cumulativeWeight;
+    private static String[] modifierKey;
+    private static double totalWeight;
+
     private static final List<DifficultyControl> controls = Lists.newArrayList();
-    private static final List<DifficultyModifier> modifiers = Lists.newArrayList();
+    private static final Map<String,DifficultyModifier> modifiers = Maps.newHashMap();
 
     private static final Map<Integer,Map<EntityLiving,SpawnEventDetails>> eventsThisTickByDimension = Maps.newHashMap();
 
@@ -25,7 +27,7 @@ public class DifficultyManager {
         controls.add(control);
     }
     public static void addDifficultyModifier(DifficultyModifier modifier){
-        modifiers.add(modifier);
+        modifiers.put(modifier.getIdentifier(),modifier);
     }
 
     public static void clearModifiersAndControls(){
@@ -48,21 +50,33 @@ public class DifficultyManager {
     }
 
 
-    private static void makeDifficultyChanges(EntityLiving entity, int determinedDifficulty){
-        Set<DifficultyModifier> modifiers = Sets.newHashSet();
-        while (determinedDifficulty>allowedMargin){
-            DifficultyModifier pickedModifier = pickModifierFromList();
-            if(pickedModifier.costPerChange()<=(determinedDifficulty+allowedMargin) {
+    private static void makeDifficultyChanges(EntityLiving entity, int determinedDifficulty, Random rand){
+        Map<String,Integer> modifierInstances = Maps.newHashMap();
+        int failCount=0;
+        while (determinedDifficulty>allowedMargin && failCount<maxFailCount) {
+            DifficultyModifier pickedModifier = pickModifierFromList(rand);
+            boolean failed = true;
+            if (pickedModifier.costPerChange() <= (determinedDifficulty + allowedMargin)) {
                 //add mod to list, IFF not past max
-                if(modifiers.contains())
-
-                //reduce remainder if we added to list
-                determinedDifficulty -= pickedModifier.costPerChange();
+                int numAlreadyInList = modifierInstances.computeIfAbsent(pickedModifier.getIdentifier(), result -> 0);
+                if (numAlreadyInList < pickedModifier.getMaxInstances()) {
+                    modifierInstances.put(pickedModifier.getIdentifier(), 1 + modifierInstances.get(pickedModifier.getIdentifier()));
+                    //reduce remainder of difficulty
+                    determinedDifficulty -= pickedModifier.costPerChange();
+                    failed = false;
+                    failCount=0;
+                }
             }
-
-
-            //for now, just put it all on the first one
-            modifiers.get(0).makeChange(determinedDifficulty-100,entity);
+            if (failed){
+                failCount++;
+            }
+            String log = "For spawn of "+entity.getName()+ " with difficulty "+determinedDifficulty+", decided to use: ";
+            for(String modId : modifierInstances.keySet()){
+                int numToApply = modifierInstances.get(modId);
+                modifiers.get(modId).makeChange(numToApply,entity);
+                log = log + modId+" "+numToApply+" times, ";
+            }
+            LOG.info(log);
         }
 
     }
@@ -90,9 +104,31 @@ public class DifficultyManager {
         SpawnEventDetails details = eventsThisTickByDimension.computeIfAbsent(joinWorldEvent.getEntity().world.provider.getDimension(), thing -> new HashMap<>()).get(mobToSpawn);
         if(details!=null) {
             int difficulty = determineDifficultyForSpawnEvent(details);
-            makeDifficultyChanges(mobToSpawn, difficulty);
+            makeDifficultyChanges(mobToSpawn, difficulty, joinWorldEvent.getWorld().rand);
         }
 
 
+    }
+
+    public static void generateWeightMap() {
+        cumulativeWeight = new double[modifiers.size()];
+        modifierKey = new String[modifiers.size()];
+        totalWeight = 0.0d;
+        int count=0;
+        for(DifficultyModifier modifier : modifiers.values()){
+            totalWeight+=modifier.getWeight();
+            cumulativeWeight[count]=totalWeight;
+            modifierKey[count]=modifier.getIdentifier();
+            count++;
+        }
+    }
+    private static DifficultyModifier pickModifierFromList(Random rand) {
+        double weightToFind = rand.nextDouble() * totalWeight;
+        for(int i=0;i<cumulativeWeight.length;i++){
+            if(weightToFind<cumulativeWeight[i]){
+                return modifiers.get(modifierKey[i]);
+            }
+        }
+        return null;
     }
 }

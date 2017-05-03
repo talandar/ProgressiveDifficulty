@@ -21,6 +21,7 @@ public class DifficultyConfiguration {
     public static boolean controlEnabled;
     public static int baseDifficulty;
     public static int allowedMargin;
+    public static int maxFailCount;
 
     public static void syncConfig(){
         try {
@@ -37,6 +38,9 @@ public class DifficultyConfiguration {
             Property allowedMarginProp = config.get(Configuration.CATEGORY_GENERAL,
                     "AllowedMargin",5,"If the difficulty of a mob is this close to the target, stop looking.  Larger values will cause more variance in mob difficulty, but smaller values may cause excessive computation attempting to find an exact match.");
             allowedMargin = Math.abs(allowedMarginProp.getInt());
+            Property maxFailCountProp = config.get(Configuration.CATEGORY_GENERAL,
+                    "MaxAllowedFailures",5,"Allow this many failures while trying to apply modifiers.  Higher values might cause modifier determination to take a long time, but allows closer control over difficulty.");
+            maxFailCount = Math.abs(maxFailCountProp.getInt());
 
 
             //controls
