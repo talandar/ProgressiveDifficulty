@@ -2,6 +2,7 @@ package derpatiel.progressivediff;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -9,6 +10,7 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static derpatiel.progressivediff.DifficultyConfiguration.*;
 
@@ -47,7 +49,18 @@ public class DifficultyManager {
 
 
     private static void makeDifficultyChanges(EntityLiving entity, int determinedDifficulty){
-        if (determinedDifficulty > 100){
+        Set<DifficultyModifier> modifiers = Sets.newHashSet();
+        while (determinedDifficulty>allowedMargin){
+            DifficultyModifier pickedModifier = pickModifierFromList();
+            if(pickedModifier.costPerChange()<=(determinedDifficulty+allowedMargin) {
+                //add mod to list, IFF not past max
+                if(modifiers.contains())
+
+                //reduce remainder if we added to list
+                determinedDifficulty -= pickedModifier.costPerChange();
+            }
+
+
             //for now, just put it all on the first one
             modifiers.get(0).makeChange(determinedDifficulty-100,entity);
         }

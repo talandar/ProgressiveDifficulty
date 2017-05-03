@@ -5,7 +5,8 @@ import net.minecraft.entity.EntityLivingBase;
 
 public abstract class DifficultyModifier {
 
-    public abstract int getMinChange();
-    public abstract int getMaxChange();
-    public abstract void makeChange(int changeValue, EntityLivingBase entity);
+    public abstract int getMaxInstances();
+    public abstract void makeChange(int numInstances, EntityLivingBase entity);
+    public abstract int costPerChange();
+    public abstract double getWeight();
 }

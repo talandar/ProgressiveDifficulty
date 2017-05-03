@@ -16,32 +16,32 @@ import net.minecraftforge.common.config.Property;
  */
 public class AddResistanceModifier extends DifficultyModifier {
 
-    private int minResistanceLevel;
-    private int maxResistanceLevel;
-    private int diffCostPerLevelResistance;
+    private static int maxResistanceLevel;
+    private static int diffCostPerLevelResistance;
+    private static double selectionWeight;
 
-    public AddResistanceModifier(int maxResistanceLevel, int diffCostPerLevelResistance){
-        this.minResistanceLevel = 1;
-        this.maxResistanceLevel = maxResistanceLevel;
-        this.diffCostPerLevelResistance = diffCostPerLevelResistance;
-    }
-
-
-    @Override
-    public int getMinChange() {
-        return minResistanceLevel * diffCostPerLevelResistance;
+    public AddResistanceModifier(){
     }
 
     @Override
-    public int getMaxChange() {
-        return maxResistanceLevel * diffCostPerLevelResistance;
+    public int getMaxInstances() {
+        return maxResistanceLevel;
     }
 
     @Override
-    public void makeChange(int changeValue, EntityLivingBase entity) {
-        int addLevel = changeValue/diffCostPerLevelResistance;
-        entity.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE,Integer.MAX_VALUE,addLevel,false,true));
+    public void makeChange(int numChanges, EntityLivingBase entity) {
+        entity.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE,Integer.MAX_VALUE,numChanges,false,true));
 
+    }
+
+    @Override
+    public int costPerChange() {
+        return diffCostPerLevelResistance;
+    }
+
+    @Override
+    public double getWeight() {
+        return selectionWeight;
     }
 
     public static void readConfig(Configuration config) {
@@ -54,8 +54,11 @@ public class AddResistanceModifier extends DifficultyModifier {
         Property difficultyCostPerResistanceLevelProp = config.get(DifficultyConfiguration.CATEGORY_MODIFIERS,
                 "DifficultyCostPerResistLevel",10,"Cost of each level of resistance.");
         int diffCostPerResistLevel = difficultyCostPerResistanceLevelProp.getInt();
-        if(addResistanceEnabled && maxResistLevel>0 && diffCostPerResistLevel>0) {
-            DifficultyManager.addDifficultyModifier(new AddResistanceModifier(maxResistLevel, diffCostPerResistLevel));
+        Property selectionWeightProp = config.get(DifficultyConfiguration.CATEGORY_MODIFIERS,
+                "ResistanceModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
+        selectionWeight = selectionWeightProp.getDouble();
+        if(addResistanceEnabled && maxResistLevel>0 && diffCostPerResistLevel>0 && selectionWeight>0) {
+            DifficultyManager.addDifficultyModifier(new AddResistanceModifier());
         }
 
 
