@@ -50,34 +50,37 @@ public class DifficultyManager {
     }
 
 
-    private static void makeDifficultyChanges(EntityLiving entity, int determinedDifficulty, Random rand){
-        Map<String,Integer> modifierInstances = Maps.newHashMap();
-        int failCount=0;
-        while (determinedDifficulty>allowedMargin && failCount<maxFailCount) {
+    private static void makeDifficultyChanges(EntityLiving entity, int determinedDifficulty, Random rand) {
+        Map<String, Integer> thisSpawnModifiers = Maps.newHashMap();
+        int initialDifficulty = determinedDifficulty;
+        int failCount = 0;
+        while (determinedDifficulty > allowedMargin && failCount < maxFailCount) {
             DifficultyModifier pickedModifier = pickModifierFromList(rand);
             boolean failed = true;
             if (pickedModifier.costPerChange() <= (determinedDifficulty + allowedMargin)) {
                 //add mod to list, IFF not past max
-                int numAlreadyInList = modifierInstances.computeIfAbsent(pickedModifier.getIdentifier(), result -> 0);
+                int numAlreadyInList = thisSpawnModifiers.computeIfAbsent(pickedModifier.getIdentifier(), result -> 0);
                 if (numAlreadyInList < pickedModifier.getMaxInstances()) {
-                    modifierInstances.put(pickedModifier.getIdentifier(), 1 + modifierInstances.get(pickedModifier.getIdentifier()));
+                    thisSpawnModifiers.put(pickedModifier.getIdentifier(), 1 + thisSpawnModifiers.get(pickedModifier.getIdentifier()));
                     //reduce remainder of difficulty
                     determinedDifficulty -= pickedModifier.costPerChange();
                     failed = false;
-                    failCount=0;
+                    failCount = 0;
                 }
             }
-            if (failed){
+            if (failed) {
                 failCount++;
             }
-            String log = "For spawn of "+entity.getName()+ " with difficulty "+determinedDifficulty+", decided to use: ";
-            for(String modId : modifierInstances.keySet()){
-                int numToApply = modifierInstances.get(modId);
-                modifiers.get(modId).makeChange(numToApply,entity);
-                log = log + modId+" "+numToApply+" times, ";
-            }
-            LOG.info(log);
         }
+
+        String log = "For spawn of " + entity.getName() + " with difficulty " + initialDifficulty + ", decided to use: ";
+        for (String modId : thisSpawnModifiers.keySet()) {
+            int numToApply = thisSpawnModifiers.get(modId);
+            modifiers.get(modId).makeChange(numToApply, entity);
+            log = log + modId + " " + numToApply + " times, ";
+        }
+        LOG.info(log);
+
 
     }
 

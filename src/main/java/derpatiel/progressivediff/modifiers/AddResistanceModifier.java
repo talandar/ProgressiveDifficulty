@@ -55,14 +55,15 @@ public class AddResistanceModifier extends DifficultyModifier {
         boolean addResistanceEnabled = addResistanceModifierEnabledProp.getBoolean();
         Property resistanceLevelMaxLevelProp = config.get(DifficultyConfiguration.CATEGORY_MODIFIERS,
                 "ResistanceModifierMaxLevel",2,"Maximum resistance level added to the mob when this is triggered.  Remember, each resistance level is a flat 20% damage reduction.  Level 5+ will make the mob invincible.");
-        int maxResistLevel = resistanceLevelMaxLevelProp.getInt();
+        maxResistanceLevel = resistanceLevelMaxLevelProp.getInt();
         Property difficultyCostPerResistanceLevelProp = config.get(DifficultyConfiguration.CATEGORY_MODIFIERS,
                 "DifficultyCostPerResistLevel",10,"Cost of each level of resistance.");
-        int diffCostPerResistLevel = difficultyCostPerResistanceLevelProp.getInt();
+
+        diffCostPerLevelResistance = difficultyCostPerResistanceLevelProp.getInt();
         Property selectionWeightProp = config.get(DifficultyConfiguration.CATEGORY_MODIFIERS,
                 "ResistanceModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
         selectionWeight = selectionWeightProp.getDouble();
-        if(addResistanceEnabled && maxResistLevel>0 && diffCostPerResistLevel>0 && selectionWeight>0) {
+        if(addResistanceEnabled && maxResistanceLevel>0 && diffCostPerLevelResistance>0 && selectionWeight>0) {
             DifficultyManager.addDifficultyModifier(new AddResistanceModifier());
         }
 

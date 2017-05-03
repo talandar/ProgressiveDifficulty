@@ -25,7 +25,7 @@ public class FromSpawnerControl extends DifficultyControl {
 
     public static void readConfig(Configuration config) {
         Property addedDifficultyFromSpawnerProp = config.get(DifficultyConfiguration.CATEGORY_CONTROLS,
-                "SpawnerAddedDifficulty", 10.0f,"Difficulty added to a mob if it is from a spawner.");
+                "SpawnerAddedDifficulty", 10,"Difficulty added to a mob if it is from a spawner.");
         int addedDifficultyIfSpawner = addedDifficultyFromSpawnerProp.getInt();
         if(addedDifficultyIfSpawner!=0){
             DifficultyManager.addDifficultyControl(new FromSpawnerControl(addedDifficultyIfSpawner));
