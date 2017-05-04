@@ -58,7 +58,7 @@ public class DifficultyManager {
         while (determinedDifficulty > allowedMargin && failCount < maxFailCount) {
             DifficultyModifier pickedModifier = pickModifierFromList(rand);
             boolean failed = true;
-            if (pickedModifier.costPerChange() <= (determinedDifficulty + allowedMargin)) {
+            if (pickedModifier.costPerChange() <= (determinedDifficulty + allowedMargin) && pickedModifier.validForEntity(entity)) {
                 //add mod to list, IFF not past max
                 int numAlreadyInList = thisSpawnModifiers.computeIfAbsent(pickedModifier.getIdentifier(), result -> 0);
                 if (numAlreadyInList < pickedModifier.getMaxInstances()) {

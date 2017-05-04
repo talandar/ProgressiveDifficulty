@@ -2,10 +2,7 @@ package derpatiel.progressivediff;
 
 import derpatiel.progressivediff.controls.DepthControl;
 import derpatiel.progressivediff.controls.FromSpawnerControl;
-import derpatiel.progressivediff.modifiers.AddHealthModifier;
-import derpatiel.progressivediff.modifiers.AddResistanceModifier;
-import derpatiel.progressivediff.modifiers.AddSpeedModifier;
-import derpatiel.progressivediff.modifiers.AddStrengthModifier;
+import derpatiel.progressivediff.modifiers.*;
 import derpatiel.progressivediff.util.LOG;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -54,6 +51,7 @@ public class DifficultyConfiguration {
             AddResistanceModifier.readConfig(config);
             AddStrengthModifier.readConfig(config);
             AddSpeedModifier.readConfig(config);
+            CreeperChargeModifier.readConfig(config);
 
             EntityFilter.loadConfig(config);
 

@@ -10,4 +10,7 @@ public abstract class DifficultyModifier {
     public abstract int costPerChange();
     public abstract double getWeight();
     public abstract String getIdentifier();
+    public boolean validForEntity(EntityLiving entity){
+        return true;
+    }
 }
