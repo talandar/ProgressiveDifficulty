@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import derpatiel.progressivediff.util.LOG;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -73,7 +74,7 @@ public class DifficultyManager {
             }
         }
 
-        String log = "For spawn of " + entity.getName() + " with difficulty " + initialDifficulty + ", decided to use: ";
+        String log = "For spawn of " + EntityList.getEntityString(entity) + " with difficulty " + initialDifficulty + ", ("+determinedDifficulty+" remaining) decided to use: ";
         for (String modId : thisSpawnModifiers.keySet()) {
             int numToApply = thisSpawnModifiers.get(modId);
             modifiers.get(modId).makeChange(numToApply, entity);
@@ -86,10 +87,12 @@ public class DifficultyManager {
 
     public static void onCheckSpawnEvent(LivingSpawnEvent.CheckSpawn checkSpawnEvent) {
         SpawnEventDetails details = new SpawnEventDetails();
-        details.entity = (EntityLiving)checkSpawnEvent.getEntityLiving();
-        details.spawnEvent = checkSpawnEvent;
-        details.fromSpawner=false;
-        eventsThisTickByDimension.computeIfAbsent(details.entity.world.provider.getDimension(), thing -> new HashMap<>()).put(details.entity,details);
+        if(EntityFilter.shouldModifyEntity(checkSpawnEvent.getEntityLiving())) {
+            details.entity = (EntityLiving) checkSpawnEvent.getEntityLiving();
+            details.spawnEvent = checkSpawnEvent;
+            details.fromSpawner = false;
+            eventsThisTickByDimension.computeIfAbsent(details.entity.world.provider.getDimension(), thing -> new HashMap<>()).put(details.entity, details);
+        }
     }
 
     public static void onSpecialSpawnEvent(LivingSpawnEvent.SpecialSpawn specialSpawnEvent) {
@@ -109,8 +112,6 @@ public class DifficultyManager {
             int difficulty = determineDifficultyForSpawnEvent(details);
             makeDifficultyChanges(mobToSpawn, difficulty, joinWorldEvent.getWorld().rand);
         }
-
-
     }
 
     public static void generateWeightMap() {

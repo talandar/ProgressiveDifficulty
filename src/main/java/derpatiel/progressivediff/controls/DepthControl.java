@@ -10,6 +10,8 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 
 public class DepthControl extends DifficultyControl {
 
+    private static final String IDENTIFIER = "CONTROL_DEPTH";
+
     private double addedPerBlock;
 
     public DepthControl(double addedPerBlock){
@@ -27,10 +29,10 @@ public class DepthControl extends DifficultyControl {
     }
 
     public static void readConfig(Configuration config) {
-        Property doesDepthControlDifficulty = config.get(DifficultyConfiguration.CATEGORY_CONTROLS,
+        Property doesDepthControlDifficulty = config.get(IDENTIFIER,
                 "DepthEffectsDifficulty", true, "Depth of spawn changes the difficulty of a mob.  Lower Y value means higher difficulty.  Y>=64 (ocean level and above) is unaffected.");
         boolean depthControlsDifficulty = doesDepthControlDifficulty.getBoolean();
-        Property addedDifficultyPerBlockDepthProp = config.get(DifficultyConfiguration.CATEGORY_CONTROLS,
+        Property addedDifficultyPerBlockDepthProp = config.get(IDENTIFIER,
                 "DepthAddedDifficulty", 1.0d, "Difficulty added to a mob for each level below Y=64 it spawns at.");
         double addedDifficultyPerBlockDepth = addedDifficultyPerBlockDepthProp.getDouble();
         if (depthControlsDifficulty && addedDifficultyPerBlockDepth > 0){

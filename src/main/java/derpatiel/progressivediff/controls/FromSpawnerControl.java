@@ -12,6 +12,8 @@ import net.minecraftforge.common.config.Property;
  */
 public class FromSpawnerControl extends DifficultyControl {
 
+    private static final String IDENTIFIER = "CONTROL_SPAWNER";
+
     private int addedDifficulty;
 
     public FromSpawnerControl(int addedDifficulty){
@@ -24,7 +26,7 @@ public class FromSpawnerControl extends DifficultyControl {
     }
 
     public static void readConfig(Configuration config) {
-        Property addedDifficultyFromSpawnerProp = config.get(DifficultyConfiguration.CATEGORY_CONTROLS,
+        Property addedDifficultyFromSpawnerProp = config.get(IDENTIFIER,
                 "SpawnerAddedDifficulty", 10,"Difficulty added to a mob if it is from a spawner.");
         int addedDifficultyIfSpawner = addedDifficultyFromSpawnerProp.getInt();
         if(addedDifficultyIfSpawner!=0){
