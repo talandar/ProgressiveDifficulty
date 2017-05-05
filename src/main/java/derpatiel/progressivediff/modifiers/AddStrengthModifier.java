@@ -2,7 +2,9 @@ package derpatiel.progressivediff.modifiers;
 
 import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.DifficultyModifier;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.common.config.Configuration;
@@ -20,6 +22,11 @@ public class AddStrengthModifier extends DifficultyModifier {
     private static double selectionWeight;
 
     public AddStrengthModifier(){
+    }
+
+    @Override
+    public boolean validForEntity(EntityLiving entity) {
+        return !(entity instanceof IRangedAttackMob);
     }
 
     @Override

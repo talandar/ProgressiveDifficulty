@@ -20,14 +20,15 @@ public class EntityFilter {
     };
 
     private static boolean blacklistMode;
-    private static Set<String> mobList;
+    private static final Set<String> mobList = Sets.newHashSet();
 
     public static void loadConfig(Configuration config){
         Property blacklistProp = config.get(Configuration.CATEGORY_GENERAL,"BlacklistMode",true,"All mobs are modified, except those that are in the blacklist.  If set to false, only those in the mob list are modified.  Boss-type mobs are never modified.");
         blacklistMode = blacklistProp.getBoolean();
 
         Property mobListProp = config.get(Configuration.CATEGORY_GENERAL,"MobList",defaultBlacklist,"List of mobs, either blacklist or whitelisted for modification by this mod.  See BlacklistMode.");
-        mobList = Sets.newHashSet(mobListProp.getStringList());
+        mobList.clear();
+        mobList.addAll(Sets.newHashSet(mobListProp.getStringList()));
     }
 
     public static boolean shouldModifyEntity(EntityLivingBase entity){

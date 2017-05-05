@@ -2,7 +2,6 @@ package derpatiel.progressivediff;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import derpatiel.progressivediff.util.LOG;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;

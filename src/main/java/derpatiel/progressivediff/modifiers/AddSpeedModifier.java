@@ -30,7 +30,6 @@ public class AddSpeedModifier extends DifficultyModifier {
     @Override
     public void makeChange(int numChanges, EntityLivingBase entity) {
         entity.addPotionEffect(new PotionEffect(MobEffects.SPEED,Integer.MAX_VALUE,numChanges,false,true));
-
     }
 
     @Override
