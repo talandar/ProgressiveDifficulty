@@ -85,16 +85,19 @@ public class DifficultyManager {
     }
 
     public static void onCheckSpawnEvent(LivingSpawnEvent.CheckSpawn checkSpawnEvent) {
-        SpawnEventDetails details = new SpawnEventDetails();
-        if(EntityFilter.shouldModifyEntity(checkSpawnEvent.getEntityLiving())) {
-            details.entity = (EntityLiving) checkSpawnEvent.getEntityLiving();
-            details.spawnEvent = checkSpawnEvent;
-            details.fromSpawner = false;
-            eventsThisTickByDimension.computeIfAbsent(details.entity.world.provider.getDimension(), thing -> new HashMap<>()).put(details.entity, details);
+        if(DifficultyConfiguration.controlEnabled) {
+            SpawnEventDetails details = new SpawnEventDetails();
+            if (EntityFilter.shouldModifyEntity(checkSpawnEvent.getEntityLiving())) {
+                details.entity = (EntityLiving) checkSpawnEvent.getEntityLiving();
+                details.spawnEvent = checkSpawnEvent;
+                details.fromSpawner = false;
+                eventsThisTickByDimension.computeIfAbsent(details.entity.world.provider.getDimension(), thing -> new HashMap<>()).put(details.entity, details);
+            }
         }
     }
 
     public static void onSpecialSpawnEvent(LivingSpawnEvent.SpecialSpawn specialSpawnEvent) {
+
         SpawnEventDetails details = eventsThisTickByDimension.computeIfAbsent(specialSpawnEvent.getEntityLiving().world.provider.getDimension(), thing -> new HashMap<>()).get(specialSpawnEvent.getEntityLiving());
         if(details!=null){
             details.fromSpawner=true;

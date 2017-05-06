@@ -6,7 +6,7 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 public class SpawnEventDetails {
 
     public EntityLiving entity;
-    public boolean fromSpawner;
+    public boolean fromSpawner=false;
 
     public LivingSpawnEvent.CheckSpawn spawnEvent;
 }

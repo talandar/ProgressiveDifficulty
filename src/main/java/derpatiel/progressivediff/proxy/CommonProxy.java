@@ -17,20 +17,19 @@ public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         LOG.info("preInit COMMON");
         DifficultyConfiguration.config = new Configuration(event.getSuggestedConfigurationFile());
-        DifficultyConfiguration.syncConfig();
     }
 
     public void init(FMLInitializationEvent event) {
         LOG.info("init COMMON");
         PacketHandler.init();
-        if(DifficultyConfiguration.controlEnabled) {//don't register event handler if we're not enabled.
-            MinecraftForge.EVENT_BUS.register(EventHandler.eventHandler);
-        }
+        MinecraftForge.EVENT_BUS.register(EventHandler.eventHandler);
     }
 
     public void postInit(FMLPostInitializationEvent event) {
         LOG.info("postInit COMMON");
-        DifficultyManager.generateWeightMap();
+        //normally would do this in pre-init, but we need to let other mods add achievements and stuff
+        //so we can key off them.
+        DifficultyConfiguration.syncConfig();
     }
 
 }

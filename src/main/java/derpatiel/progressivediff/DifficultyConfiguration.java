@@ -58,6 +58,9 @@ public class DifficultyConfiguration {
 
             EntityFilter.loadConfig(config);
 
+
+            DifficultyManager.generateWeightMap();
+
         }catch(Exception e){
             //failed to read config!?
             LOG.error("FAILED TO READ CONFIG FOR ProgressiveDifficulty!");

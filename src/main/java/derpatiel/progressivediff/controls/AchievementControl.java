@@ -1,5 +1,6 @@
 package derpatiel.progressivediff.controls;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import derpatiel.progressivediff.DifficultyControl;
 import derpatiel.progressivediff.DifficultyManager;
@@ -19,11 +20,7 @@ import java.util.Map;
 public class AchievementControl extends DifficultyControl {
 
     private static final String IDENTIFIER = "CONTROL_ACHIEVEMENTS";
-    private static final String[] defaultAchievementValues = new String[]{
-            "achievement.killEnemy:5",
-            "achievement.portal:5",
-            "achievement.killWither:20"
-    };
+    private static final String[] defaultAchievementValues = generateDefaultAchievementValues(0);
 
     private Map<Achievement,Integer> addedDifficultyAchievementMap;
     private MultiplePlayerCombineType type;
@@ -108,15 +105,27 @@ public class AchievementControl extends DifficultyControl {
         MultiplePlayerCombineType type = MultiplePlayerCombineType.AVERAGE;
 
         Map<Achievement,Integer> map = Maps.newHashMap();
+        Map<String,Integer> nameMap = Maps.newHashMap();
         for(String line : achieveMap){
             String[] parts = line.split(":");
+            if(parts.length!=2){
+                LOG.error("invalid entry in AchievementValues key.  Requires strings of format \"achievementid:value\", found "+line);
+                continue;
+            }
             String name = parts[0];
-            int value = Integer.parseInt(parts[1]);
+            int value = 0;
+            try {
+                value = Integer.parseInt(parts[1]);
+            }catch(NumberFormatException nfe){
+                LOG.error("Invalid value format for achievement "+name+", requires integer, was "+parts[1]);
+            }
+            nameMap.put(name,value);
         }
         for(Achievement a : AchievementList.ACHIEVEMENTS){
-            System.out.println(a.statId);
+            if(nameMap.containsKey(a.statId)){
+                map.put(a,nameMap.get(a.statId));
+            }
         }
-        //TODO: parse achieveMap, handle errors
 
         try{
             type = MultiplePlayerCombineType.valueOf(comboTypeStr);
@@ -127,4 +136,14 @@ public class AchievementControl extends DifficultyControl {
             DifficultyManager.addDifficultyControl(new AchievementControl(map,type));
         }
     }
+
+
+    private static String[] generateDefaultAchievementValues(int value) {
+        List<String> defaults = Lists.newArrayList();
+        for(Achievement achievement : AchievementList.ACHIEVEMENTS){
+            defaults.add(achievement.statId+":"+value);
+        }
+        return defaults.toArray(new String[defaults.size()]);
+    }
+
 }
