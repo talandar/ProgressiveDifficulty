@@ -89,13 +89,13 @@ public class PlayerTimeInWorldControl extends DifficultyControl {
         int addedDifficultyPerMinecraftDay = addedDifficultyPerMinecraftDayProp.getInt();
         Property multiplePlayerComboTypeProp = config.get(IDENTIFIER,
                 "MultiplePlayerCombinationType",MultiplePlayerCombineType.AVERAGE.toString(),
-                "When there are multiple players within the spawn area (128 block radius), use this to decide what log-in time to use.  Valid values: "+MultiplePlayerCombineType.getValidValuesString()+" defaults to AVERAGE.");
+                "When there are multiple players within the spawn area (128 block radius), use this to decide what value time to use.  Valid values: "+MultiplePlayerCombineType.getValidValuesString()+" defaults to AVERAGE.");
         String comboTypeStr = multiplePlayerComboTypeProp.getString();
         MultiplePlayerCombineType type = MultiplePlayerCombineType.AVERAGE;
         try{
             type = MultiplePlayerCombineType.valueOf(comboTypeStr);
         }catch(Exception e){
-            LOG.error("Invalid Multiple Player Combination type found for control with identifier "+IDENTIFIER+", found "+comboTypeStr);
+            LOG.error("Invalid Multiple Player Combination type found for control with identifier "+IDENTIFIER+", found "+comboTypeStr+", using AVERAGE instead.");
         }
         if (timeAddsDifficulty && addedDifficultyPerMinecraftDay > 0){
             DifficultyManager.addDifficultyControl(new PlayerTimeInWorldControl(addedDifficultyPerMinecraftDay,type));

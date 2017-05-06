@@ -47,6 +47,7 @@ public class DifficultyConfiguration {
             AdditionalPlayersControl.readConfig(config);
             PlayerTimeInWorldControl.readConfig(config);
             DistanceFromSpawnControl.readConfig(config);
+            AchievementControl.readConfig(config);
 
             //modifiers
             AddHealthModifier.readConfig(config);
