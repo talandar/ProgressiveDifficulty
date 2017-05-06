@@ -1,9 +1,6 @@
 package derpatiel.progressivediff;
 
-import derpatiel.progressivediff.controls.AdditionalPlayersControl;
-import derpatiel.progressivediff.controls.DepthControl;
-import derpatiel.progressivediff.controls.FromSpawnerControl;
-import derpatiel.progressivediff.controls.PlayerTimeInWorldControl;
+import derpatiel.progressivediff.controls.*;
 import derpatiel.progressivediff.modifiers.*;
 import derpatiel.progressivediff.util.LOG;
 import net.minecraftforge.common.config.Configuration;
@@ -49,6 +46,7 @@ public class DifficultyConfiguration {
             FromSpawnerControl.readConfig(config);
             AdditionalPlayersControl.readConfig(config);
             PlayerTimeInWorldControl.readConfig(config);
+            DistanceFromSpawnControl.readConfig(config);
 
             //modifiers
             AddHealthModifier.readConfig(config);
