@@ -41,7 +41,7 @@ public class ProgressiveDifficulty
     }
 
     @Mod.EventHandler
-    public void onServerLoad(FMLServerStartingEvent event){
-        //event.registerServerCommand(new MFCommand());
+    public void onServerLoad(FMLServerStartingEvent event) {
+        event.registerServerCommand(new ServerCommand());
     }
 }
