@@ -41,7 +41,7 @@ public class DifficultyManager {
 
     private static int determineDifficultyForSpawnEvent(SpawnEventDetails details){
         int difficulty = baseDifficulty;
-
+        difficulty-=EntityFilter.getMobSpawnCost(details.entity);
         for(DifficultyControl control : controls){
             difficulty+=control.getChangeForSpawn(details);
         }

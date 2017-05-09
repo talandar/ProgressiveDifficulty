@@ -29,8 +29,6 @@ public class ServerCommand extends CommandBase {
             "progdiff (Progressive Difficulty) help:",
             "\"progdiff sync\" sync the config for the server",
             "\tUseful for testing difficulty configs.",
-            "\"progdiff entities\" generate a list of entities that extend EntityLiving, which are mostly mobs.",
-            "\tMostly useful for generating whitelists and blacklists."
     };
 
     @Override
@@ -40,7 +38,7 @@ public class ServerCommand extends CommandBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "\"progdiff sync\" or \"progdiff entities\"";
+        return "\"progdiff sync\"";
     }
 
     @Override
@@ -51,13 +49,14 @@ public class ServerCommand extends CommandBase {
         if(args[0].equalsIgnoreCase("sync")){
             DifficultyConfiguration.syncConfig();
             sendChat(sender, new String[]{"Synced config."});
-        }else if(args[0].equalsIgnoreCase("entities")){
+        /*}else if(args[0].equalsIgnoreCase("entities")){
             for(EntityEntry entry : ForgeRegistries.ENTITIES.getValues()){
                 if(EntityLiving.class.isAssignableFrom(entry.getEntityClass())) {
                     LOG.info(entry.getName());
                 }
             }
             sendChat(sender, new String[]{"See Log for entity list."});
+            */
         }else{
             sendChat(sender,usage);
         }
