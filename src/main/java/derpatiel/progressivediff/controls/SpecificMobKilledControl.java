@@ -33,6 +33,8 @@ public class SpecificMobKilledControl extends DifficultyControl {
         List<EntityPlayerMP> playersInRange = details.entity.getEntityWorld().getEntitiesWithinAABB(EntityPlayerMP.class, details.entity.getEntityBoundingBox().expand(128,128,128));
         int killedMobs = 0;
         EntityList.EntityEggInfo eggInfo = EntityRegistry.getEntry(details.entity.getClass()).getEgg();
+        if(eggInfo==null)
+            return 0;
         StatBase stat = eggInfo.killEntityStat;
         if(playersInRange.size()>0) {
             switch (type) {
