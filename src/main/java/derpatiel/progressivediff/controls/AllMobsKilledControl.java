@@ -80,7 +80,7 @@ public class AllMobsKilledControl extends DifficultyControl {
                 "EnableMobsKilledAffectsDifficulty", true, "Difficulty is added based on the number of mobs players have killed.");
         boolean enableModifier = mobsKilledAffectsDifficultyEnabledProp.getBoolean();
         Property addedDifficultyPerHundredKillsProp = config.get(IDENTIFIER,
-                "PerHundredKillsAddedDifficulty", 10d, "Difficulty added to a mob for every 100 kills of any mob.");
+                "PerHundredKillsAddedDifficulty", 10, "Difficulty added to a mob for every 100 kills of any mob.");
         int addedDifficultyPerHundredKills = addedDifficultyPerHundredKillsProp.getInt();
         Property multiplePlayerComboTypeProp = config.get(IDENTIFIER,
                 "MultiplePlayerCombinationType",MultiplePlayerCombineType.AVERAGE.toString(),
