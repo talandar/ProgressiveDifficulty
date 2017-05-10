@@ -14,7 +14,7 @@ import java.util.List;
 
 public class AllMobsKilledControl extends DifficultyControl {
 
-    private static final String IDENTIFIER = "KILLEDMOBS";
+    private static final String IDENTIFIER = "CONTROL_KILLEDMOBS";
 
     private MultiplePlayerCombineType type;
     private double difficultyPerHundredKills;
