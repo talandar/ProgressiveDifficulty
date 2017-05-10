@@ -54,6 +54,7 @@ public class DifficultyConfiguration {
             DistanceFromSpawnControl.readConfig(config);
             AchievementControl.readConfig(config);
             AllMobsKilledControl.readConfig(config);
+            SpecificMobKilledControl.readConfig(config);
 
             //modifiers
             AddHealthModifier.readConfig(config);
