@@ -20,6 +20,7 @@ public class DifficultyConfiguration {
     public static int baseDifficulty;
     public static int allowedMargin;
     public static int maxFailCount;
+    public static boolean negativeDifficultyPreventsSpawn;
 
     public static void syncConfig(){
         try {
@@ -40,6 +41,10 @@ public class DifficultyConfiguration {
                     "MaxAllowedFailures",5,"Allow this many failures while trying to apply modifiers.  Higher values might cause modifier determination to take a long time, but allows closer control over difficulty.");
             maxFailCount = Math.abs(maxFailCountProp.getInt());
 
+            Property negativeDifficultyPreventsSpawnProp = config.get(Configuration.CATEGORY_GENERAL,
+                    "PreventLowDifficultySpawns",true,"Spawns with a negative calculated difficulty for any reason (usually \"MobCosts\"), will have a chance of not spawning at all.  The chance of it not spawning is equal to the negative difficulty as a percent.  (-50 has a 50/50 chance of spawning, -101 will never spawn)");
+            negativeDifficultyPreventsSpawn=negativeDifficultyPreventsSpawnProp.getBoolean();
+
 
             //controls
             DepthControl.readConfig(config);
@@ -48,6 +53,7 @@ public class DifficultyConfiguration {
             PlayerTimeInWorldControl.readConfig(config);
             DistanceFromSpawnControl.readConfig(config);
             AchievementControl.readConfig(config);
+            AllMobsKilledControl.readConfig(config);
 
             //modifiers
             AddHealthModifier.readConfig(config);

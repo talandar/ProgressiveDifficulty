@@ -112,6 +112,13 @@ public class DifficultyManager {
         SpawnEventDetails details = eventsThisTickByDimension.computeIfAbsent(joinWorldEvent.getEntity().world.provider.getDimension(), thing -> new HashMap<>()).get(mobToSpawn);
         if(details!=null) {
             int difficulty = determineDifficultyForSpawnEvent(details);
+            if(difficulty<0 && DifficultyConfiguration.negativeDifficultyPreventsSpawn){
+                int chance = joinWorldEvent.getWorld().rand.nextInt(100);
+                if(Math.abs(difficulty)>=chance){
+                    joinWorldEvent.setCanceled(true);
+                    return;
+                }
+            }
             makeDifficultyChanges(mobToSpawn, difficulty, joinWorldEvent.getWorld().rand);
         }
     }

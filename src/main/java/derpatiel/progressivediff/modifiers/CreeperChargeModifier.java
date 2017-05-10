@@ -34,9 +34,13 @@ public class CreeperChargeModifier extends DifficultyModifier {
     public void makeChange(int numInstances, EntityLivingBase entity) {
         if(entity instanceof EntityCreeper){
             EntityCreeper creeper = (EntityCreeper)entity;
+            //this avoids our creepers being on fire when they spawn
+            creeper.setFire(0);
             creeper.onStruckByLightning(null);
+            entity.setHealth(entity.getMaxHealth());
+
         }
-        entity.setHealth(entity.getMaxHealth());
+
     }
 
     @Override
