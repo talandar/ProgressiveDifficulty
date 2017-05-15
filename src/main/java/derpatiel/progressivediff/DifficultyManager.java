@@ -119,7 +119,9 @@ public class DifficultyManager {
                     return;
                 }
             }
-            makeDifficultyChanges(mobToSpawn, difficulty, joinWorldEvent.getWorld().rand);
+            if(difficulty>=threshold) {
+                makeDifficultyChanges(mobToSpawn, difficulty, joinWorldEvent.getWorld().rand);
+            }
         }
     }
 

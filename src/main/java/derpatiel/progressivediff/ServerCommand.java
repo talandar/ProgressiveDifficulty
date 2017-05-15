@@ -49,14 +49,6 @@ public class ServerCommand extends CommandBase {
         if(args[0].equalsIgnoreCase("sync")){
             DifficultyConfiguration.syncConfig();
             sendChat(sender, new String[]{"Synced config."});
-        /*}else if(args[0].equalsIgnoreCase("entities")){
-            for(EntityEntry entry : ForgeRegistries.ENTITIES.getValues()){
-                if(EntityLiving.class.isAssignableFrom(entry.getEntityClass())) {
-                    LOG.info(entry.getName());
-                }
-            }
-            sendChat(sender, new String[]{"See Log for entity list."});
-            */
         }else{
             sendChat(sender,usage);
         }
