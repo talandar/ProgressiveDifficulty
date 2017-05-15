@@ -63,7 +63,7 @@ public class AddStrengthModifier extends DifficultyModifier {
                 "StrengthModifierMaxLevel",3,"Maximum strength level added to the mob when this is triggered.  Each strength level is 1.5 hearts of extra damage per attack.");
         maxStrengthLevel = strengthLevelMaxLevelProp.getInt();
         Property difficultyCostPerStrengthLevelProp = config.get(IDENTIFIER,
-                "DifficultyCostPerStrengthLevel",10,"Cost of each level of strength.");
+                "DifficultyCostPerStrengthLevel",15,"Cost of each level of strength.");
         diffCostPerLevelStrength = difficultyCostPerStrengthLevelProp.getInt();
         Property selectionWeightProp = config.get(IDENTIFIER,
                 "StrengthModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");

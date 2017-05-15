@@ -52,7 +52,7 @@ public class DifficultyConfiguration {
 
             //controls
             DepthControl.readConfig(config);
-            FromSpawnerControl.readConfig(config);
+            //FromSpawnerControl.readConfig(config);
             AdditionalPlayersControl.readConfig(config);
             PlayerTimeInWorldControl.readConfig(config);
             DistanceFromSpawnControl.readConfig(config);

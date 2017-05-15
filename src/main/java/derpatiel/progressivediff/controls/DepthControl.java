@@ -33,7 +33,7 @@ public class DepthControl extends DifficultyControl {
                 "DepthEffectsDifficulty", true, "Depth of spawn changes the difficulty of a mob.  Lower Y value means higher difficulty.  Y>=64 (ocean level and above) is unaffected.");
         boolean depthControlsDifficulty = doesDepthControlDifficulty.getBoolean();
         Property addedDifficultyPerBlockDepthProp = config.get(IDENTIFIER,
-                "DepthAddedDifficulty", 1.0d, "Difficulty added to a mob for each level below Y=64 it spawns at.");
+                "DepthAddedDifficulty", 0.2d, "Difficulty added to a mob for each level below Y=64 it spawns at.");
         double addedDifficultyPerBlockDepth = addedDifficultyPerBlockDepthProp.getDouble();
         if (depthControlsDifficulty && addedDifficultyPerBlockDepth > 0){
             DifficultyManager.addDifficultyControl(new DepthControl(addedDifficultyPerBlockDepth));

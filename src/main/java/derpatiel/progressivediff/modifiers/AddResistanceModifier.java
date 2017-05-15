@@ -59,7 +59,7 @@ public class AddResistanceModifier extends DifficultyModifier {
                 "ResistanceModifierMaxLevel",2,"Maximum resistance level added to the mob when this is triggered.  Each resistance level is a flat 20% damage reduction.  Level 5+ will make the mob invincible.");
         maxResistanceLevel = resistanceLevelMaxLevelProp.getInt();
         Property difficultyCostPerResistanceLevelProp = config.get(IDENTIFIER,
-                "DifficultyCostPerResistLevel",10,"Cost of each level of resistance.");
+                "DifficultyCostPerResistLevel",20,"Cost of each level of resistance.");
 
         diffCostPerLevelResistance = difficultyCostPerResistanceLevelProp.getInt();
         Property selectionWeightProp = config.get(IDENTIFIER,

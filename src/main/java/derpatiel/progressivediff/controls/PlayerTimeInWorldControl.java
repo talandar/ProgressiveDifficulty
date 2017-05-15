@@ -19,11 +19,11 @@ public class PlayerTimeInWorldControl extends DifficultyControl {
 
     private static final String IDENTIFIER = "CONTROL_LOG_IN_TIME";
 
-    private int addedDifficultyPerDay;
+    private double addedDifficultyPerDay;
     private MultiplePlayerCombineType type;
 
 
-    public PlayerTimeInWorldControl(int addedDifficultyPerDay, MultiplePlayerCombineType combineType){
+    public PlayerTimeInWorldControl(double addedDifficultyPerDay, MultiplePlayerCombineType combineType){
         this.addedDifficultyPerDay = addedDifficultyPerDay;
         this.type = combineType;
     }
@@ -85,8 +85,8 @@ public class PlayerTimeInWorldControl extends DifficultyControl {
                 "EnableTimeInWorldAddsDifficulty", true, "Difficulty is added based on the time players have been logged in to the world.");
         boolean timeAddsDifficulty = extraPlayersAffectsDifficultyEnabled.getBoolean();
         Property addedDifficultyPerMinecraftDayProp = config.get(IDENTIFIER,
-                "PerDayPlaytimeAddedDifficulty", 1, "Difficulty added to a mob for each minecraft day.");
-        int addedDifficultyPerMinecraftDay = addedDifficultyPerMinecraftDayProp.getInt();
+                "PerDayPlaytimeAddedDifficulty", 0.2d, "Difficulty added to a mob for each minecraft day.");
+        double addedDifficultyPerMinecraftDay = addedDifficultyPerMinecraftDayProp.getInt();
         Property multiplePlayerComboTypeProp = config.get(IDENTIFIER,
                 "MultiplePlayerCombinationType",MultiplePlayerCombineType.AVERAGE.toString(),
                 "When there are multiple players within the spawn area (128 block radius), use this to decide what value time to use.  Valid values: "+MultiplePlayerCombineType.getValidValuesString()+" defaults to AVERAGE.");

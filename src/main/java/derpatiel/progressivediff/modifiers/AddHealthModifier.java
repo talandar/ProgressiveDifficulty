@@ -58,10 +58,10 @@ public class AddHealthModifier extends DifficultyModifier {
                 "HealthModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
         selectionWeight = selectionWeightProp.getDouble();
         Property healthModifierMaxAddedHealthProp = config.get(IDENTIFIER,
-                "HealthModifierMaxAddedHealth",10,"Maximum amount of health added to the mob.");
+                "HealthModifierMaxAddedHealth",20,"Maximum amount of health added to the mob.");
         maxAddedHealth = healthModifierMaxAddedHealthProp.getInt();
         Property difficultyCostPerHealthProp = config.get(IDENTIFIER,
-                "DifficultyCostPerHealth",1,"Cost of each extra point of health.  Larger values will mean more difficult mobs will have less health, while smaller values will cause more difficult mobs to have lots of extra health.");
+                "DifficultyCostPerHealth",5,"Cost of each extra point of health.  Larger values will mean more difficult mobs will have less health, while smaller values will cause more difficult mobs to have lots of extra health.");
         diffCostPerHealth = difficultyCostPerHealthProp.getInt();
         if(addHealthModEnabled && maxAddedHealth>0 && diffCostPerHealth>0 && selectionWeight>0) {
             DifficultyManager.addDifficultyModifier(new AddHealthModifier());

@@ -33,7 +33,7 @@ public class AdditionalPlayersControl extends DifficultyControl {
                 "ExtraPlayersAffectsDifficulty", true, "Extra Players in the spawn radius changes the difficulty of a mob.  Each player past the first adds difficulty.");
         boolean extraPlayersAddsDifficulty = extraPlayersAffectsDifficultyEnabled.getBoolean();
         Property addedDifficultyPerExtraPlayerProp = config.get(IDENTIFIER,
-                "ExtraPlayerAddedDifficulty", 10, "Difficulty added to a mob for each player past the first in the spawn radius (128 blocks).");
+                "ExtraPlayerAddedDifficulty", 20, "Difficulty added to a mob for each player past the first in the spawn radius (128 blocks).");
         int addedDifficultyPerExtraPlayer = addedDifficultyPerExtraPlayerProp.getInt();
         if (extraPlayersAddsDifficulty && addedDifficultyPerExtraPlayer > 0){
             DifficultyManager.addDifficultyControl(new AdditionalPlayersControl(addedDifficultyPerExtraPlayer));
