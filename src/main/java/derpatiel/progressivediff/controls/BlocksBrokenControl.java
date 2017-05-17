@@ -6,48 +6,46 @@ import derpatiel.progressivediff.MultiplePlayerCombineType;
 import derpatiel.progressivediff.SpawnEventDetails;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.PlayerAreaStatAccumulator;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
-import java.util.List;
+public class BlocksBrokenControl extends DifficultyControl {
 
-public class SpecificMobKilledControl extends DifficultyControl {
-
-    private static final String IDENTIFIER = "CONTROL_KILLED_SPECIFIC_MOB";
+    private static final String IDENTIFIER = "CONTROL_BLOCKS_BROKEN";
 
     private MultiplePlayerCombineType type;
-    private double difficultyPerHundredKills;
+    private double difficultyPerHundredBlocks;
 
-    public SpecificMobKilledControl(MultiplePlayerCombineType type, double difficultyPerHundredKills){
+    public BlocksBrokenControl(MultiplePlayerCombineType type, double difficultyPerHundredBlocks){
         this.type = type;
-        this.difficultyPerHundredKills = difficultyPerHundredKills;
+        this.difficultyPerHundredBlocks = difficultyPerHundredBlocks;
     }
 
     @Override
     public int getChangeForSpawn(SpawnEventDetails details) {
 
-        EntityList.EntityEggInfo eggInfo = EntityRegistry.getEntry(details.entity.getClass()).getEgg();
-        if(eggInfo==null)
-            return 0;
-        StatBase stat = eggInfo.killEntityStat;
-        int killedMobs = PlayerAreaStatAccumulator.getStatForPlayersInArea(type,stat,details.entity,128);
+        int brokenBlocks = PlayerAreaStatAccumulator.getStatForPlayersInArea(type,details.entity,128,(player)->{
+            int accum = 0;
+            for(StatBase brokenStat : StatList.MINE_BLOCK_STATS) {
+                accum+=player.getStatFile().readStat(brokenStat);
+            }
+            return accum;
+        });
 
-        return (int)(((double)killedMobs * difficultyPerHundredKills) / 100);
+        return (int)(((double)brokenBlocks * difficultyPerHundredBlocks) / 100);
     }
 
     public static void readConfig(Configuration config) {
         Property mobsKilledAffectsDifficultyEnabledProp = config.get(IDENTIFIER,
-                "EnableSpecificMobKilledAffectsDifficulty", true, "Difficulty is added based on the number of the mob to be spawned that players have killed.");
+                "EnableBlocksBrokenAffectsDifficulty", true, "Difficulty is added based on the number of blocks broken by the player.");
         boolean enableModifier = mobsKilledAffectsDifficultyEnabledProp.getBoolean();
         Property addedDifficultyPerHundredKillsProp = config.get(IDENTIFIER,
-                "PerHundredKillsAddedDifficulty", 1, "Difficulty added to a mob for every 100 kills of the mob to be spawned.");
-        int addedDifficultyPerHundredKills = addedDifficultyPerHundredKillsProp.getInt();
+                "PerHundredBlocksAddedDifficulty", 0.01d, "Difficulty added to a mob for every 100 broken blocks.");
+        double addedDifficultyPerHundredKills = addedDifficultyPerHundredKillsProp.getDouble();
         Property multiplePlayerComboTypeProp = config.get(IDENTIFIER,
                 "MultiplePlayerCombinationType",MultiplePlayerCombineType.AVERAGE.toString(),
                 "When there are multiple players within the spawn area (128 block radius), use this to decide what value time to use.  Valid values: "+MultiplePlayerCombineType.getValidValuesString()+" defaults to AVERAGE.");
@@ -59,7 +57,7 @@ public class SpecificMobKilledControl extends DifficultyControl {
             LOG.error("Invalid Multiple Player Combination type found for control with identifier "+IDENTIFIER+", found "+comboTypeStr+", using AVERAGE instead.");
         }
         if (enableModifier && addedDifficultyPerHundredKills > 0){
-            DifficultyManager.addDifficultyControl(new SpecificMobKilledControl(type,addedDifficultyPerHundredKills));
+            DifficultyManager.addDifficultyControl(new BlocksBrokenControl(type,addedDifficultyPerHundredKills));
         }
     }
 }

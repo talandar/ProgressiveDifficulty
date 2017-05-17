@@ -7,6 +7,7 @@ import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.MultiplePlayerCombineType;
 import derpatiel.progressivediff.SpawnEventDetails;
 import derpatiel.progressivediff.util.LOG;
+import derpatiel.progressivediff.util.PlayerAreaStatAccumulator;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.AchievementList;
@@ -33,52 +34,7 @@ public class AchievementControl extends DifficultyControl {
 
     @Override
     public int getChangeForSpawn(SpawnEventDetails details) {
-        List<EntityPlayerMP> playersInRange = details.entity.getEntityWorld().getEntitiesWithinAABB(EntityPlayerMP.class, details.entity.getEntityBoundingBox().expand(128,128,128));
-        int decidedPoints = 0;
-        if(playersInRange.size()>0) {
-            switch (type) {
-                case AVERAGE:
-                    int avgSum = 0;
-                    for (EntityPlayerMP player : playersInRange) {
-                        int points = getAchievementPointsForPlayer(player);
-                        avgSum += points;
-                    }
-                    decidedPoints = avgSum / playersInRange.size();
-                    break;
-                case CLOSEST:
-                    EntityPlayerMP closestPlayer = (EntityPlayerMP) details.entity.getEntityWorld().getClosestPlayerToEntity(details.entity, 128.0d);
-                    decidedPoints = getAchievementPointsForPlayer(closestPlayer);
-                    break;
-                case MAX:
-                    int max = 0;
-                    for (EntityPlayerMP player : playersInRange) {
-                        int points = getAchievementPointsForPlayer(player);
-                        if (points > max) {
-                            max = points;
-                        }
-                    }
-                    decidedPoints = max;
-                    break;
-                case MIN:
-                    int min = Integer.MAX_VALUE;
-                    for (EntityPlayerMP player : playersInRange) {
-                        int points = getAchievementPointsForPlayer(player);
-                        if (points < min) {
-                            min = points;
-                        }
-                    }
-                    decidedPoints = min;
-                    break;
-                case SUM:
-                    int sum = 0;
-                    for (EntityPlayerMP player : playersInRange) {
-                        int points = getAchievementPointsForPlayer(player);
-                        sum += points;
-                    }
-                    decidedPoints = sum;
-                    break;
-            }
-        }
+        int decidedPoints = PlayerAreaStatAccumulator.getStatForPlayersInArea(type,details.entity,128,(player)->getAchievementPointsForPlayer(player));
         return decidedPoints;
     }
 
@@ -107,17 +63,19 @@ public class AchievementControl extends DifficultyControl {
         Map<Achievement,Integer> map = Maps.newHashMap();
         Map<String,Integer> nameMap = Maps.newHashMap();
         for(String line : achieveMap){
-            String[] parts = line.split(":");
-            if(parts.length!=2){
+            int index = line.lastIndexOf(":");
+            if(index<0){
                 LOG.error("invalid entry in AchievementValues key.  Requires strings of format \"achievementid:value\", found "+line);
                 continue;
             }
-            String name = parts[0];
+            String name = line.substring(0,index);
+            String valStr = line.substring(index+1);
+
             int value = 0;
             try {
-                value = Integer.parseInt(parts[1]);
+                value = Integer.parseInt(valStr);
             }catch(NumberFormatException nfe){
-                LOG.error("Invalid value format for achievement "+name+", requires integer, was "+parts[1]);
+                LOG.error("Invalid value format for achievement "+name+", requires integer, was "+valStr);
             }
             nameMap.put(name,value);
         }

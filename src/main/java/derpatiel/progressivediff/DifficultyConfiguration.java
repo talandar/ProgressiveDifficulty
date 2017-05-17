@@ -6,6 +6,9 @@ import derpatiel.progressivediff.util.LOG;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class DifficultyConfiguration {
     //the config file itself from Forge
     public static Configuration config;
@@ -59,6 +62,7 @@ public class DifficultyConfiguration {
             AchievementControl.readConfig(config);
             AllMobsKilledControl.readConfig(config);
             SpecificMobKilledControl.readConfig(config);
+            BlocksBrokenControl.readConfig(config);
 
             //modifiers
             AddHealthModifier.readConfig(config);
@@ -74,7 +78,11 @@ public class DifficultyConfiguration {
 
         }catch(Exception e){
             //failed to read config!?
-            LOG.error("FAILED TO READ CONFIG FOR ProgressiveDifficulty!");
+            LOG.error("FAILED TO READ CONFIG FOR ProgressiveDifficulty.  Message was: "+e.getMessage());
+            StringWriter stream = new StringWriter();
+            PrintWriter writer = new PrintWriter(stream);
+            e.printStackTrace(writer);
+            LOG.error(stream.toString());
         }finally{
             if(config.hasChanged()){
                 config.save();

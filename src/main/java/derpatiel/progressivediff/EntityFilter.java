@@ -47,15 +47,17 @@ public class EntityFilter {
                 "If cost is positive, calculated difficulty of a mob must be at least this high before the mob will spawn at all.  If cost is negative, the mob will get bonus difficulty points to spend.");
         mobSpawnCosts.clear();
         Arrays.stream(mobSpawnMapProp.getStringList()).forEach(entry->{
-            String[] parts = entry.split(":");
-            if(parts.length!=2){
-                LOG.error("Problem reading line for mob spawn cost.  Needed \"<mobRegistryName>:<cost>\", but string was "+entry);
+            int index = entry.lastIndexOf(":");
+            if(index<0) {
+                LOG.error("Problem reading line for mob spawn cost.  Needed \"<mobRegistryName>:<cost>\", but string was " + entry);
             }else{
+                String name = entry.substring(0,index);
+                String valStr = entry.substring(index+1);
                 try {
-                    int value = Integer.parseInt(parts[1]);
-                    mobSpawnCosts.put(parts[0],value);
+                    int value = Integer.parseInt(valStr);
+                    mobSpawnCosts.put(name,value);
                 }catch(Exception e){
-                    LOG.error("Problem reading line for mob spawn cost.  Second parameter should have been integer, but was "+parts[1]);
+                    LOG.error("Problem reading line for mob spawn cost.  Second parameter should have been integer, but was "+valStr);
                 }
             }
                 mobSpawnCosts.put(entry,0);

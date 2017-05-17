@@ -5,6 +5,7 @@ import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.MultiplePlayerCombineType;
 import derpatiel.progressivediff.SpawnEventDetails;
 import derpatiel.progressivediff.util.LOG;
+import derpatiel.progressivediff.util.PlayerAreaStatAccumulator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.stats.StatBase;
@@ -30,52 +31,7 @@ public class PlayerTimeInWorldControl extends DifficultyControl {
 
     @Override
     public int getChangeForSpawn(SpawnEventDetails details) {
-        List<EntityPlayerMP> playersInRange = details.entity.getEntityWorld().getEntitiesWithinAABB(EntityPlayerMP.class, details.entity.getEntityBoundingBox().expand(128,128,128));
-        int decidedTicks = 0;
-        if(playersInRange.size()>0) {
-            switch (type) {
-                case AVERAGE:
-                    int avgSum = 0;
-                    for (EntityPlayerMP player : playersInRange) {
-                        int ticksPlayed = player.getStatFile().readStat(StatList.PLAY_ONE_MINUTE);
-                        avgSum += ticksPlayed;
-                    }
-                    decidedTicks = avgSum / playersInRange.size();
-                    break;
-                case CLOSEST:
-                    EntityPlayerMP closestPlayer = (EntityPlayerMP) details.entity.getEntityWorld().getClosestPlayerToEntity(details.entity, 128.0d);
-                    decidedTicks = closestPlayer.getStatFile().readStat(StatList.PLAY_ONE_MINUTE);
-                    break;
-                case MAX:
-                    int max = 0;
-                    for (EntityPlayerMP player : playersInRange) {
-                        int ticksPlayed = player.getStatFile().readStat(StatList.PLAY_ONE_MINUTE);
-                        if (ticksPlayed > max) {
-                            max = ticksPlayed;
-                        }
-                    }
-                    decidedTicks = max;
-                    break;
-                case MIN:
-                    int min = Integer.MAX_VALUE;
-                    for (EntityPlayerMP player : playersInRange) {
-                        int ticksPlayed = player.getStatFile().readStat(StatList.PLAY_ONE_MINUTE);
-                        if (ticksPlayed < min) {
-                            min = ticksPlayed;
-                        }
-                    }
-                    decidedTicks = min;
-                    break;
-                case SUM:
-                    int sum = 0;
-                    for (EntityPlayerMP player : playersInRange) {
-                        int ticksPlayed = player.getStatFile().readStat(StatList.PLAY_ONE_MINUTE);
-                        sum += ticksPlayed;
-                    }
-                    decidedTicks = sum;
-                    break;
-            }
-        }
+        int decidedTicks = PlayerAreaStatAccumulator.getStatForPlayersInArea(type,StatList.PLAY_ONE_MINUTE,details.entity,128);
         double days = ((double)decidedTicks)/(24000.0d);//minecraft day length
         return (int)(addedDifficultyPerDay * days);
     }
@@ -86,7 +42,7 @@ public class PlayerTimeInWorldControl extends DifficultyControl {
         boolean timeAddsDifficulty = extraPlayersAffectsDifficultyEnabled.getBoolean();
         Property addedDifficultyPerMinecraftDayProp = config.get(IDENTIFIER,
                 "PerDayPlaytimeAddedDifficulty", 0.2d, "Difficulty added to a mob for each minecraft day.");
-        double addedDifficultyPerMinecraftDay = addedDifficultyPerMinecraftDayProp.getInt();
+        double addedDifficultyPerMinecraftDay = addedDifficultyPerMinecraftDayProp.getDouble();
         Property multiplePlayerComboTypeProp = config.get(IDENTIFIER,
                 "MultiplePlayerCombinationType",MultiplePlayerCombineType.AVERAGE.toString(),
                 "When there are multiple players within the spawn area (128 block radius), use this to decide what value time to use.  Valid values: "+MultiplePlayerCombineType.getValidValuesString()+" defaults to AVERAGE.");

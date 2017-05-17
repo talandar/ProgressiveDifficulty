@@ -28,7 +28,7 @@ public class ServerCommand extends CommandBase {
     private String[] usage = new String[]{
             "progdiff (Progressive Difficulty) help:",
             "\"progdiff sync\" sync the config for the server",
-            "\tUseful for testing difficulty configs.",
+            "     Useful for testing difficulty configs.",
     };
 
     @Override
@@ -67,8 +67,7 @@ public class ServerCommand extends CommandBase {
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
             String[] validCompletions = new String[]{
-                    "sync",
-                    "entities"
+                    "sync"
             };
             return CommandBase.getListOfStringsMatchingLastWord(args, validCompletions);
         }
