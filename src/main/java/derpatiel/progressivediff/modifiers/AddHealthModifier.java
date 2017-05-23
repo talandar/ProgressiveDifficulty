@@ -2,6 +2,7 @@ package derpatiel.progressivediff.modifiers;
 
 import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.DifficultyModifier;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -28,11 +29,12 @@ public class AddHealthModifier extends DifficultyModifier {
     }
 
     @Override
-    public void makeChange(int numInstances, EntityLivingBase entity) {
-        IAttributeInstance maxHealthAttribute = entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
-        maxHealthAttribute.setBaseValue(maxHealthAttribute.getBaseValue() + numInstances);
-        entity.setHealth(entity.getMaxHealth());
-
+    public void makeChange(int numInstances, EntityLiving entity, boolean isUpkeep) {
+        if(!isUpkeep) {
+            IAttributeInstance maxHealthAttribute = entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
+            maxHealthAttribute.setBaseValue(maxHealthAttribute.getBaseValue() + numInstances);
+            entity.setHealth(entity.getMaxHealth());
+        }
     }
 
     @Override

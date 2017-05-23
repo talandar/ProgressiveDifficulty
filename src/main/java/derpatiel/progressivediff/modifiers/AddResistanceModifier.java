@@ -3,6 +3,7 @@ package derpatiel.progressivediff.modifiers;
 import derpatiel.progressivediff.DifficultyConfiguration;
 import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.DifficultyModifier;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -31,8 +32,8 @@ public class AddResistanceModifier extends DifficultyModifier {
     }
 
     @Override
-    public void makeChange(int numChanges, EntityLivingBase entity) {
-        entity.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE,Integer.MAX_VALUE,numChanges,false,true));
+    public void makeChange(int numChanges, EntityLiving entity, boolean isUpkeep) {
+        entity.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE,25,numChanges,false,true));
 
     }
 

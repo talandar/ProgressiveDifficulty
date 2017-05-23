@@ -45,5 +45,6 @@ public class EventHandler {
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event){
         DifficultyManager.onWorldTick(event.world.provider.getDimension());
+        MobUpkeepController.tick(event.world);
     }
 }

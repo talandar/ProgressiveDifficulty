@@ -2,6 +2,7 @@ package derpatiel.progressivediff.modifiers;
 
 import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.DifficultyModifier;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
@@ -28,8 +29,8 @@ public class AddSpeedModifier extends DifficultyModifier {
     }
 
     @Override
-    public void makeChange(int numChanges, EntityLivingBase entity) {
-        entity.addPotionEffect(new PotionEffect(MobEffects.SPEED,Integer.MAX_VALUE,numChanges,false,true));
+    public void makeChange(int numChanges, EntityLiving entity, boolean isUpkeep) {
+        entity.addPotionEffect(new PotionEffect(MobEffects.SPEED,25,numChanges,false,true));
     }
 
     @Override
