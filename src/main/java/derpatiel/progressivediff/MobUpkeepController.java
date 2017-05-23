@@ -32,7 +32,8 @@ public class MobUpkeepController {
         for(int entityId : storedChangeMap.keySet()) {
             Entity entity = world.getEntityByID(entityId);
             if(entity==null || entity.isDead || !(entity instanceof EntityLiving)){
-                continue;
+                continue;//TODO: remove entry, because it's no longer valid
+                //also todo: what about unload/reload?
             }
             Map<String,Integer> changes = storedChangeMap.get(entityId);
             for(String change : changes.keySet()){
