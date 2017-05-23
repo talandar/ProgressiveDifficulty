@@ -80,8 +80,11 @@ public class DifficultyManager {
             log = log + modId + " " + numToApply + " times, ";
         }
         LOG.info(log);
+        MobUpkeepController.register(entity,thisSpawnModifiers);
+    }
 
-
+    public static DifficultyModifier getModifierById(String id){
+        return modifiers.get(id);
     }
 
     public static void onCheckSpawnEvent(LivingSpawnEvent.CheckSpawn checkSpawnEvent) {

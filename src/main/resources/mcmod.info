@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "progressivedifficulty",
+  "name": "Progressive Difficulty",
+  "description": "Highly configurable way to control mob difficulty.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["Talandar"],
+  "credits": "Talandar - code, development, testing, TheRangerX - ideas and support",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
