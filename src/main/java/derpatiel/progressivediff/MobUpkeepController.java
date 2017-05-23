@@ -1,24 +1,21 @@
 package derpatiel.progressivediff;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
 
+import java.util.List;
 import java.util.Map;
 
 public class MobUpkeepController {
 
-    private static final int UPKEEP_INTERVAL = 10;
-    public static final int POTION_EFFECT_LENGTH = 15;
-
-    private static final Map<Integer,Map<String,Integer>> storedChangeMap = Maps.newHashMap();
+    private static final int UPKEEP_INTERVAL = 10;//upkeep every half second
+    public static final int POTION_EFFECT_LENGTH = 15;//.75 second potion effect length (a tiny bit longer than the upkeep, in case of lag or something)
 
     private static int upkeepCount=0;
-
-    public static void register(EntityLiving mob, Map<String,Integer> changes){
-        storedChangeMap.put(mob.getEntityId(),changes);
-    }
 
     public static void tick(World world){
         upkeepCount++;
@@ -29,13 +26,12 @@ public class MobUpkeepController {
     }
 
     private static void doUpkeep(World world){
-        for(int entityId : storedChangeMap.keySet()) {
-            Entity entity = world.getEntityByID(entityId);
-            if(entity==null || entity.isDead || !(entity instanceof EntityLiving)){
-                continue;//TODO: remove entry, because it's no longer valid
-                //also todo: what about unload/reload?
-            }
-            Map<String,Integer> changes = storedChangeMap.get(entityId);
+        List<EntityLiving> modifiedEntities = world.getEntities(EntityLiving.class,(entity)->{
+            return MobNBTHandler.isModifiedMob(entity) && !entity.isDead;
+        });
+
+        for(EntityLiving entity : modifiedEntities){
+            Map<String,Integer> changes = MobNBTHandler.getChangeMap(entity);
             for(String change : changes.keySet()){
                 DifficultyModifier modifier = DifficultyManager.getModifierById(change);
                 modifier.makeChange(changes.get(change),(EntityLiving)entity,true);

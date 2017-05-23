@@ -3,6 +3,7 @@ package derpatiel.progressivediff;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import derpatiel.progressivediff.util.LOG;
+import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -80,7 +81,9 @@ public class DifficultyManager {
             log = log + modId + " " + numToApply + " times, ";
         }
         LOG.info(log);
-        MobUpkeepController.register(entity,thisSpawnModifiers);
+        if(thisSpawnModifiers.size()>0) {
+            MobNBTHandler.setChangeMap(entity,thisSpawnModifiers);
+        }
     }
 
     public static DifficultyModifier getModifierById(String id){
