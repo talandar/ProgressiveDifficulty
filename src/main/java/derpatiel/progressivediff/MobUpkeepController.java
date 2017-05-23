@@ -9,7 +9,8 @@ import java.util.Map;
 
 public class MobUpkeepController {
 
-    private static final int UPKEEP_INTERVAL = 20;
+    private static final int UPKEEP_INTERVAL = 10;
+    public static final int POTION_EFFECT_LENGTH = 15;
 
     private static final Map<Integer,Map<String,Integer>> storedChangeMap = Maps.newHashMap();
 
