@@ -12,7 +12,12 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
-@Mod(modid = ProgressiveDifficulty.MODID, version = ProgressiveDifficulty.VERSION)
+@Mod(
+        modid = ProgressiveDifficulty.MODID,
+        version = ProgressiveDifficulty.VERSION,
+        acceptableRemoteVersions = "*",
+        acceptedMinecraftVersions = "[1.11,1.12)"
+)
 public class ProgressiveDifficulty
 {
     public static final String MODID = "progressivedifficulty";
@@ -21,8 +26,7 @@ public class ProgressiveDifficulty
     @Mod.Instance(MODID)
     public static ProgressiveDifficulty instance;
 
-    @SidedProxy(serverSide = "derpatiel.progressivediff.proxy.CommonProxy", clientSide = "derpatiel.progressivediff.proxy.ClientProxy")
-    public static CommonProxy proxy;
+    public static CommonProxy proxy = new CommonProxy();
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event){

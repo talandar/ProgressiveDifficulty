@@ -36,8 +36,8 @@ public class AllMobsKilledControl extends DifficultyControl {
                 "EnableMobsKilledAffectsDifficulty", true, "Difficulty is added based on the number of mobs players have killed.");
         boolean enableModifier = mobsKilledAffectsDifficultyEnabledProp.getBoolean();
         Property addedDifficultyPerHundredKillsProp = config.get(IDENTIFIER,
-                "PerHundredKillsAddedDifficulty", 1, "Difficulty added to a mob for every 100 kills of any mob.");
-        int addedDifficultyPerHundredKills = addedDifficultyPerHundredKillsProp.getInt();
+                "PerHundredKillsAddedDifficulty", 1.0d, "Difficulty added to a mob for every 100 kills of any mob.");
+        double addedDifficultyPerHundredKills = addedDifficultyPerHundredKillsProp.getDouble();
         Property multiplePlayerComboTypeProp = config.get(IDENTIFIER,
                 "MultiplePlayerCombinationType",MultiplePlayerCombineType.AVERAGE.toString(),
                 "When there are multiple players within the spawn area (128 block radius), use this to decide what value time to use.  Valid values: "+MultiplePlayerCombineType.getValidValuesString()+" defaults to AVERAGE.");
