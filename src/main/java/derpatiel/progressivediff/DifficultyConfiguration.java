@@ -49,7 +49,7 @@ public class DifficultyConfiguration {
             threshold = thresholdProp.getInt();
 
             Property negativeDifficultyPreventsSpawnProp = config.get(Configuration.CATEGORY_GENERAL,
-                    "PreventLowDifficultySpawns",true,"Spawns with a negative calculated difficulty for any reason (usually \"MobCosts\"), will have a chance of not spawning at all.  The chance of it not spawning is equal to the negative difficulty as a percent.  (-50 has a 50/50 chance of spawning, -101 will never spawn)");
+                    "PreventLowDifficultySpawns",true,"Spawns with a negative calculated difficulty for any reason (usually \"MobBaseDifficulty\"), will have a chance of not spawning at all.  The chance of it not spawning is equal to the negative difficulty as a percent.  (-50 has a 50/50 chance of spawning, -101 will never spawn)");
             negativeDifficultyPreventsSpawn=negativeDifficultyPreventsSpawnProp.getBoolean();
 
 

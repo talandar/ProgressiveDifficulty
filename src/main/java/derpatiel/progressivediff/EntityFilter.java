@@ -43,8 +43,8 @@ public class EntityFilter {
         mobList.clear();
         mobList.addAll(Sets.newHashSet(mobListProp.getStringList()));
 
-        Property mobSpawnMapProp = config.get(Configuration.CATEGORY_GENERAL,"MobCosts",generateDefaultSpawnCosts(),"A set of mob costs, of the format \"<mobRegistryName>:<cost>\".  " +
-                "If cost is positive, calculated difficulty of a mob must be at least this high before the mob will spawn at all.  If cost is negative, the mob will get bonus difficulty points to spend.");
+        Property mobSpawnMapProp = config.get(Configuration.CATEGORY_GENERAL,"MobBaseDifficulty",generateDefaultSpawnCosts(),"A set of mob costs, of the format \"<mobRegistryName>:<cost>\".  " +
+                "Provides bonus difficulty points to the mob before spawning if the number is positive.  If the number is negative, subtract that much difficulty from the mod before applying modifiers.  If the result after all controls is still negative, the value is used as the chance out of 100 that the mob spawn is cancelled entirely.");
         mobSpawnCosts.clear();
         Arrays.stream(mobSpawnMapProp.getStringList()).forEach(entry->{
             int index = entry.lastIndexOf(":");

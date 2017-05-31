@@ -14,9 +14,9 @@ public class DistanceFromSpawnControl extends DifficultyControl {
 
     private static final String IDENTIFIER = "CONTROL_SPAWN_DISTANCE";
 
-    private int addedDifficultyPerHundredBlocks;
+    private double addedDifficultyPerHundredBlocks;
 
-    public DistanceFromSpawnControl(int addedDifficultyPerHundredBlocks){
+    public DistanceFromSpawnControl(double addedDifficultyPerHundredBlocks){
         this.addedDifficultyPerHundredBlocks = addedDifficultyPerHundredBlocks;
     }
 
@@ -35,8 +35,8 @@ public class DistanceFromSpawnControl extends DifficultyControl {
                 "DistanceFromSpawnAddsDifficulty", true,"Distance from the spawn of the world adds difficulty to mobs.");
         boolean enabled = distanceFromSpawnAddsProp.getBoolean();
         Property addedDifficultyPerHundredBlocksProp = config.get(IDENTIFIER,
-                "AddedDifficultyPerHundredBlocks",1,"Add this much difficulty per hundred blocks away from spawn.");
-        int addedDifficultyPerHundredBlocks = addedDifficultyPerHundredBlocksProp.getInt();
+                "AddedDifficultyPerHundredBlocks",1.0d,"Add this much difficulty per hundred blocks away from spawn.");
+        double addedDifficultyPerHundredBlocks = addedDifficultyPerHundredBlocksProp.getDouble();
         if(enabled && addedDifficultyPerHundredBlocks>0){
             DifficultyManager.addDifficultyControl(new DistanceFromSpawnControl(addedDifficultyPerHundredBlocks));
         }
