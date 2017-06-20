@@ -9,15 +9,14 @@ import derpatiel.progressivediff.SpawnEventDetails;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.PlayerAreaStatAccumulator;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.stats.Achievement;
-import net.minecraft.stats.AchievementList;
-import net.minecraft.stats.StatList;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-
 import java.util.List;
 import java.util.Map;
 
+//import net.minecraft.stats.Achievement;
+//import net.minecraft.stats.AchievementList;
+/*
 public class AchievementControl extends DifficultyControl {
 
     private static final String IDENTIFIER = "CONTROL_ACHIEVEMENTS";
@@ -103,5 +102,5 @@ public class AchievementControl extends DifficultyControl {
         }
         return defaults.toArray(new String[defaults.size()]);
     }
-
 }
+*/
