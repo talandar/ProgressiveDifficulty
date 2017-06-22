@@ -80,7 +80,9 @@ public class DifficultyManager {
             modifiers.get(modId).makeChange(numToApply, entity,false);
             log = log + modId + " " + numToApply + " times, ";
         }
-        LOG.info(log);
+        if(DifficultyConfiguration.debugLogSpawns) {
+            LOG.info(log);
+        }
         if(thisSpawnModifiers.size()>0) {
             MobNBTHandler.setChangeMap(entity,thisSpawnModifiers);
         }

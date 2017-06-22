@@ -13,11 +13,6 @@ public class DifficultyConfiguration {
     //the config file itself from Forge
     public static Configuration config;
 
-    public static final String CATEGORY_MODIFIERS = "difficulty_modifiers";
-    public static final String CATEGORY_CONTROLS = "difficulty_controls";
-
-    //lots and lots of static variables here
-
     //general
     public static boolean controlEnabled;
     public static int baseDifficulty;
@@ -25,6 +20,7 @@ public class DifficultyConfiguration {
     public static int maxFailCount;
     public static boolean negativeDifficultyPreventsSpawn;
     public static int threshold;
+    public static boolean debugLogSpawns;
 
     public static void syncConfig(){
         try {
@@ -51,6 +47,10 @@ public class DifficultyConfiguration {
             Property negativeDifficultyPreventsSpawnProp = config.get(Configuration.CATEGORY_GENERAL,
                     "PreventLowDifficultySpawns",true,"Spawns with a negative calculated difficulty for any reason (usually \"MobBaseDifficulty\"), will have a chance of not spawning at all.  The chance of it not spawning is equal to the negative difficulty as a percent.  (-50 has a 50/50 chance of spawning, -101 will never spawn)");
             negativeDifficultyPreventsSpawn=negativeDifficultyPreventsSpawnProp.getBoolean();
+
+            Property debugLogSpawnsProp = config.get(Configuration.CATEGORY_GENERAL,
+                    "debugSpawnDetails",false,"Send messages to the log detailing computed costs of mobs and which modifiers have been chosen for them.");
+            debugLogSpawns = debugLogSpawnsProp.getBoolean();
 
 
             //controls

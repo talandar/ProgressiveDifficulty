@@ -21,7 +21,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 public class ProgressiveDifficulty
 {
     public static final String MODID = "progressivedifficulty";
-    public static final String VERSION = "1.0b1";
+    public static final String VERSION = "1.0";
 
     @Mod.Instance(MODID)
     public static ProgressiveDifficulty instance;
