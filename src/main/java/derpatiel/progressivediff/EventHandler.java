@@ -1,5 +1,6 @@
 package derpatiel.progressivediff;
 
+import derpatiel.progressivediff.modifiers.FieryModifier;
 import derpatiel.progressivediff.modifiers.PiercingModifier;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.MobNBTHandler;
@@ -53,9 +54,13 @@ public class EventHandler {
         Entity causeMob = event.getSource().getTrueSource();
         if(causeMob instanceof EntityLiving
                 && event.getEntity() instanceof EntityPlayer
-                && MobNBTHandler.isModifiedMob((EntityLiving)causeMob)
-                && MobNBTHandler.getModifierLevel((EntityLiving)causeMob, PiercingModifier.IDENTIFIER)>0) {
-            PiercingModifier.handleDamageEvent(event);
+                && MobNBTHandler.isModifiedMob((EntityLiving)causeMob)){
+            if(MobNBTHandler.getModifierLevel((EntityLiving)causeMob, PiercingModifier.IDENTIFIER)>0) {
+                PiercingModifier.handleDamageEvent(event);
+            }
+            if(MobNBTHandler.getModifierLevel((EntityLiving)causeMob, FieryModifier.IDENTIFIER)>0){
+                FieryModifier.handleDamageEvent(event);
+            }
         }
 
     }

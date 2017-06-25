@@ -34,7 +34,9 @@ public class MobUpkeepController {
             Map<String,Integer> changes = MobNBTHandler.getChangeMap(entity);
             for(String change : changes.keySet()){
                 DifficultyModifier modifier = DifficultyManager.getModifierById(change);
-                modifier.makeChange(changes.get(change),(EntityLiving)entity,true);
+                if(modifier!=null) {
+                    modifier.makeChange(changes.get(change), (EntityLiving) entity, true);
+                }
             }
         }
     }
