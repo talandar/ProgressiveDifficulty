@@ -1,6 +1,7 @@
 package derpatiel.progressivediff.util;
 
 import com.google.common.collect.Maps;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -21,6 +22,16 @@ public class MobNBTHandler {
             changeMap.put(key,compound.getInteger(key));
         }
         return changeMap;
+    }
+
+    public static int getModifierLevel(EntityLiving entity, String modifierId){
+        Map<String,Integer> changeMap = Maps.newHashMap();
+        NBTTagCompound compound = entity.getEntityData().getCompoundTag(ROOT_NBT_KEY);
+        if(compound.hasKey(modifierId)){
+            return compound.getInteger(modifierId);
+        }else{
+            return 0;
+        }
     }
 
     public static void setChangeMap(EntityLiving entity, Map<String,Integer> changeMap){

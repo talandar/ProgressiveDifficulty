@@ -1,8 +1,14 @@
 package derpatiel.progressivediff;
 
+import derpatiel.progressivediff.modifiers.PiercingModifier;
 import derpatiel.progressivediff.util.LOG;
+import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -40,6 +46,20 @@ public class EventHandler {
         if(joinWorldEvent.getEntity() instanceof EntityLiving) {
             DifficultyManager.onJoinWorldEvent(joinWorldEvent);
         }
+    }
+
+    @SubscribeEvent
+    public void onEntityHurt(LivingAttackEvent event){
+        if(event.getSource().getTrueSource() instanceof EntityLiving && event.getEntity() instanceof EntityPlayer && MobNBTHandler.isModifiedMob((EntityLiving) event.getSource().getTrueSource())){
+            EntityLiving causeMob = (EntityLiving) event.getSource().getTrueSource();
+            if(MobNBTHandler.getModifierLevel(causeMob, PiercingModifier.IDENTIFIER)>0){
+                event.getSource().setDamageBypassesArmor();
+                event.getSource().setDamageIsAbsolute();
+                event.getSource().setMagicDamage();
+            }
+
+        }
+
     }
 
     @SubscribeEvent
