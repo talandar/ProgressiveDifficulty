@@ -7,6 +7,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 
 /**
  * Created by Jim on 4/30/2017.
@@ -28,7 +29,13 @@ public class PiercingModifier extends DifficultyModifier {
 
     @Override
     public void makeChange(int numInstances, EntityLiving entity, boolean isUpkeep) {
-        //NOOP
+        //NOOP - event driven
+    }
+
+    public static void handleDamageEvent(LivingAttackEvent event){
+        event.getSource().setDamageBypassesArmor();
+        event.getSource().setDamageIsAbsolute();
+        event.getSource().setMagicDamage();
     }
 
     @Override
