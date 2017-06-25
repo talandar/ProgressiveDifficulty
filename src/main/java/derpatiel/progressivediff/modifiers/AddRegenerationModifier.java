@@ -30,8 +30,16 @@ public class AddRegenerationModifier extends DifficultyModifier {
 
     @Override
     public void makeChange(int numChanges, EntityLiving entity, boolean isUpkeep) {
-        entity.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, MobUpkeepController.POTION_EFFECT_LENGTH,numChanges,false,true));
+        PotionEffect existingEffect = entity.getActivePotionEffect(MobEffects.REGENERATION);
+        if(existingEffect==null) {
+            entity.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 50, numChanges, false, true));
+        }
 
+    }
+
+    @Override
+    public boolean validForEntity(EntityLiving entity) {
+        return !entity.isEntityUndead();
     }
 
     @Override
