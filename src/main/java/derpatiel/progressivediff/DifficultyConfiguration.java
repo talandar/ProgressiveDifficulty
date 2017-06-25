@@ -71,6 +71,7 @@ public class DifficultyConfiguration {
             AddSpeedModifier.readConfig(config);
             CreeperChargeModifier.readConfig(config);
             //PiercingModifier.readConfig(config); see issue#1, forge bug #3933
+            AddRegenerationModifier.readConfig(config);
 
             EntityFilter.loadConfig(config);
 
