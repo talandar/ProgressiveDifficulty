@@ -2,6 +2,7 @@ package derpatiel.progressivediff;
 
 import derpatiel.progressivediff.modifiers.FieryModifier;
 import derpatiel.progressivediff.modifiers.PiercingModifier;
+import derpatiel.progressivediff.modifiers.VampiricModifier;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.Entity;
@@ -50,7 +51,7 @@ public class EventHandler {
     }
 
     @SubscribeEvent
-    public void onEntityHurt(LivingAttackEvent event){
+    public void onLivingAttack(LivingAttackEvent event){
         Entity causeMob = event.getSource().getTrueSource();
         if(causeMob instanceof EntityLiving
                 && event.getEntity() instanceof EntityPlayer
@@ -60,6 +61,10 @@ public class EventHandler {
             }
             if(MobNBTHandler.getModifierLevel((EntityLiving)causeMob, FieryModifier.IDENTIFIER)>0){
                 FieryModifier.handleDamageEvent(event);
+            }
+
+            if(MobNBTHandler.getModifierLevel((EntityLiving)causeMob, VampiricModifier.IDENTIFIER)>0){
+                VampiricModifier.handleDamageEvent(event);
             }
         }
 

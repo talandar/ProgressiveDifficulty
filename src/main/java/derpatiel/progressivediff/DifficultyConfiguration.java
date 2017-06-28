@@ -73,6 +73,7 @@ public class DifficultyConfiguration {
             //PiercingModifier.readConfig(config); see issue#1, forge bug #3933
             AddRegenerationModifier.readConfig(config);
             FieryModifier.readConfig(config);
+            VampiricModifier.readConfig(config);
 
             EntityFilter.loadConfig(config);
 

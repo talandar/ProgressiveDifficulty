@@ -2,6 +2,7 @@ package derpatiel.progressivediff.modifiers;
 
 import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.DifficultyModifier;
+import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -10,19 +11,20 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 /**
  * Created by Jim on 4/30/2017.
  */
-public class FieryModifier extends DifficultyModifier {
+public class VampiricModifier extends DifficultyModifier {
 
-    public static final String IDENTIFIER = "MOD_FIRE_ASPECT";
+    public static final String IDENTIFIER = "MOD_VAMPIRIC";
 
-    private static int costForFireAspect;
+    private static int costForVampiric;
+    private static int maxInstances;
     private static double selectionWeight;
 
-    public FieryModifier(){
+    public VampiricModifier(){
     }
 
     @Override
     public int getMaxInstances() {
-        return 1;
+        return maxInstances;
     }
 
     @Override
@@ -31,13 +33,16 @@ public class FieryModifier extends DifficultyModifier {
     }
 
     public static void handleDamageEvent(LivingAttackEvent event){
-        event.getEntity().setFire(3);
-        event.getSource().setFireDamage();
+        EntityLiving attackingMob = (EntityLiving)event.getSource().getTrueSource();
+        int level = MobNBTHandler.getModifierLevel(attackingMob,IDENTIFIER);
+        float damage = event.getAmount();
+        float healDamage = damage * 0.2f * level;
+        attackingMob.heal(healDamage);
     }
 
     @Override
     public int costPerChange() {
-        return costForFireAspect;
+        return costForVampiric;
     }
 
     @Override
@@ -52,16 +57,19 @@ public class FieryModifier extends DifficultyModifier {
 
     public static void readConfig(Configuration config){
         Property modifierEnabledProp = config.get(IDENTIFIER,
-                "EnableFireAspectModifier",true,"Enable the fire aspect modifier.  This allows mobs to do damage that ignites the player.");
+                "EnableVampiricModifier",true,"Enable the vampiric modifier.  Each level of the vampiric modifier returns 20% of damage done to the mob as health, before damage reduction from armor or similar.");
         boolean modifierEnabled = modifierEnabledProp.getBoolean();
         Property selectionWeightProp = config.get(IDENTIFIER,
-                "FireAspectModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
+                "VampiricModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
         selectionWeight = selectionWeightProp.getDouble();
         Property difficultyCostProp = config.get(IDENTIFIER,
                 "DifficultyCost",5,"Cost of the modifier.");
-        costForFireAspect = difficultyCostProp.getInt();
-        if(modifierEnabled && costForFireAspect>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new FieryModifier());
+        costForVampiric = difficultyCostProp.getInt();
+        Property maxInstanceProp = config.get(IDENTIFIER,
+                "MaxInstances", 5, "Maximum number of instances of the modifier that could be applied.");
+        maxInstances = maxInstanceProp.getInt();
+        if(modifierEnabled && costForVampiric>0 && selectionWeight>0 && maxInstances>0) {
+            DifficultyManager.addDifficultyModifier(new VampiricModifier());
         }
     }
 }
