@@ -25,7 +25,7 @@ public class AddHealthModifier extends DifficultyModifier {
 
     @Override
     public int getMaxInstances() {
-        return maxAddedHealth * diffCostPerHealth;
+        return maxAddedHealth;
     }
 
     @Override
