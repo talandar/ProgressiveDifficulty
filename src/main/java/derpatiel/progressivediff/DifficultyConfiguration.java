@@ -74,6 +74,10 @@ public class DifficultyConfiguration {
             AddRegenerationModifier.readConfig(config);
             FieryModifier.readConfig(config);
             VampiricModifier.readConfig(config);
+            SlowingGazeModifier.readConfig(config);
+            HungryGazeModifier.readConfig(config);
+            WeakGazeModifier.readConfig(config);
+            FatigueGazeModifier.readConfig(config);
 
             EntityFilter.loadConfig(config);
 
