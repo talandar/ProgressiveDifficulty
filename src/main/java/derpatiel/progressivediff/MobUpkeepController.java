@@ -26,16 +26,14 @@ public class MobUpkeepController {
     }
 
     private static void doUpkeep(World world){
-        List<EntityLiving> modifiedEntities = world.getEntities(EntityLiving.class,(entity)->{
-            return MobNBTHandler.isModifiedMob(entity) && !entity.isDead;
-        });
+        List<EntityLiving> modifiedEntities = world.getEntities(EntityLiving.class,(entity)-> MobNBTHandler.isModifiedMob(entity) && !entity.isDead);
 
         for(EntityLiving entity : modifiedEntities){
             Map<String,Integer> changes = MobNBTHandler.getChangeMap(entity);
             for(String change : changes.keySet()){
                 DifficultyModifier modifier = DifficultyManager.getModifierById(change);
                 if(modifier!=null) {
-                    modifier.makeChange(changes.get(change), (EntityLiving) entity, true);
+                    modifier.handleUpkeepEvent(changes.get(change),entity);
                 }
             }
         }

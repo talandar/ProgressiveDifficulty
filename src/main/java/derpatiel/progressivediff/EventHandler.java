@@ -17,6 +17,8 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import java.util.Map;
+
 public class EventHandler {
 
     //sequence of events:
@@ -56,15 +58,12 @@ public class EventHandler {
         if(causeMob instanceof EntityLiving
                 && event.getEntity() instanceof EntityPlayer
                 && MobNBTHandler.isModifiedMob((EntityLiving)causeMob)){
-            if(MobNBTHandler.getModifierLevel((EntityLiving)causeMob, PiercingModifier.IDENTIFIER)>0) {
-                PiercingModifier.handleDamageEvent(event);
-            }
-            if(MobNBTHandler.getModifierLevel((EntityLiving)causeMob, FieryModifier.IDENTIFIER)>0){
-                FieryModifier.handleDamageEvent(event);
-            }
-
-            if(MobNBTHandler.getModifierLevel((EntityLiving)causeMob, VampiricModifier.IDENTIFIER)>0){
-                VampiricModifier.handleDamageEvent(event);
+            Map<String,Integer> changes = MobNBTHandler.getChangeMap((EntityLiving)causeMob);
+            for(String change : changes.keySet()){
+                DifficultyModifier modifier = DifficultyManager.getModifierById(change);
+                if(modifier!=null) {
+                    modifier.handleDamageEvent(event);
+                }
             }
         }
 

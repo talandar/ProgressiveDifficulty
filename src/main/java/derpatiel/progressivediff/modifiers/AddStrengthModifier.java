@@ -36,7 +36,7 @@ public class AddStrengthModifier extends DifficultyModifier {
     }
 
     @Override
-    public void makeChange(int numChanges, EntityLiving entity, boolean isUpkeep) {
+    public void handleUpkeepEvent(int numChanges, EntityLiving entity) {
         entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, MobUpkeepController.POTION_EFFECT_LENGTH,numChanges,false,true));
 
     }

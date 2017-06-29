@@ -26,11 +26,7 @@ public class FieryModifier extends DifficultyModifier {
     }
 
     @Override
-    public void makeChange(int numInstances, EntityLiving entity, boolean isUpkeep) {
-        //NOOP - event driven
-    }
-
-    public static void handleDamageEvent(LivingAttackEvent event){
+    public void handleDamageEvent(LivingAttackEvent event){
         event.getEntity().setFire(3);
         event.getSource().setFireDamage();
     }

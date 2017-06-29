@@ -28,11 +28,7 @@ public class VampiricModifier extends DifficultyModifier {
     }
 
     @Override
-    public void makeChange(int numInstances, EntityLiving entity, boolean isUpkeep) {
-        //NOOP - event driven
-    }
-
-    public static void handleDamageEvent(LivingAttackEvent event){
+    public void handleDamageEvent(LivingAttackEvent event){
         EntityLiving attackingMob = (EntityLiving)event.getSource().getTrueSource();
         int level = MobNBTHandler.getModifierLevel(attackingMob,IDENTIFIER);
         float damage = event.getAmount();

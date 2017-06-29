@@ -28,14 +28,9 @@ public class PiercingModifier extends DifficultyModifier {
     }
 
     @Override
-    public void makeChange(int numInstances, EntityLiving entity, boolean isUpkeep) {
-        //NOOP - event driven
-    }
-
-    public static void handleDamageEvent(LivingAttackEvent event){
+    public void handleDamageEvent(LivingAttackEvent event){
         event.getSource().setDamageBypassesArmor();
         event.getSource().setDamageIsAbsolute();
-        event.getSource().setMagicDamage();
     }
 
     @Override

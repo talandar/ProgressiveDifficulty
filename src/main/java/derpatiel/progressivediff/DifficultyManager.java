@@ -77,7 +77,7 @@ public class DifficultyManager {
         String log = "For spawn of " + EntityList.getEntityString(entity) + " with difficulty " + initialDifficulty + ", ("+determinedDifficulty+" remaining) decided to use: ";
         for (String modId : thisSpawnModifiers.keySet()) {
             int numToApply = thisSpawnModifiers.get(modId);
-            modifiers.get(modId).makeChange(numToApply, entity,false);
+            modifiers.get(modId).handleSpawnEvent(numToApply, entity);
             log = log + modId + " " + numToApply + " times, ";
         }
         if(DifficultyConfiguration.debugLogSpawns) {

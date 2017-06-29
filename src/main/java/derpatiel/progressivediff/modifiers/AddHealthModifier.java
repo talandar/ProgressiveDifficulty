@@ -29,12 +29,10 @@ public class AddHealthModifier extends DifficultyModifier {
     }
 
     @Override
-    public void makeChange(int numInstances, EntityLiving entity, boolean isUpkeep) {
-        if(!isUpkeep) {
-            IAttributeInstance maxHealthAttribute = entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
-            maxHealthAttribute.setBaseValue(maxHealthAttribute.getBaseValue() + numInstances);
-            entity.setHealth(entity.getMaxHealth());
-        }
+    public void handleSpawnEvent(int numInstances, EntityLiving entity) {
+        IAttributeInstance maxHealthAttribute = entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
+        maxHealthAttribute.setBaseValue(maxHealthAttribute.getBaseValue() + numInstances);
+        entity.setHealth(entity.getMaxHealth());
     }
 
     @Override
