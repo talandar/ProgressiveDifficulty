@@ -16,11 +16,14 @@ public class AddRegenerationModifier extends DifficultyModifier {
 
     private static final String IDENTIFIER = "MOD_REGENERATION";
 
-    private static int maxRegenLevel;
-    private static int diffCostPerLevelRegen;
-    private static double selectionWeight;
+    private int maxRegenLevel;
+    private int diffCostPerLevelRegen;
+    private double selectionWeight;
 
-    public AddRegenerationModifier(){
+    public AddRegenerationModifier(int maxRegenLevel, int diffCostPerLevelRegen, double selectionWeight){
+        this.maxRegenLevel = maxRegenLevel;
+        this.diffCostPerLevelRegen = diffCostPerLevelRegen;
+        this.selectionWeight = selectionWeight;
     }
 
     @Override
@@ -63,16 +66,16 @@ public class AddRegenerationModifier extends DifficultyModifier {
         boolean addRegenerationEnabled = addRegenerationModifierEnabledProp.getBoolean();
         Property regenerationLevelMaxLevelProp = config.get(IDENTIFIER,
                 "RegenerationModifierMaxLevel",2,"Maximum regeneration level added to the mob when this is triggered.");
-        maxRegenLevel = regenerationLevelMaxLevelProp.getInt();
+        int maxRegenLevel = regenerationLevelMaxLevelProp.getInt();
         Property difficultyCostPerRegenerationLevelProp = config.get(IDENTIFIER,
                 "DifficultyCostPerRegenerationLevel",20,"Cost of each level of regeneration.");
 
-        diffCostPerLevelRegen = difficultyCostPerRegenerationLevelProp.getInt();
+        int diffCostPerLevelRegen = difficultyCostPerRegenerationLevelProp.getInt();
         Property selectionWeightProp = config.get(IDENTIFIER,
                 "RegenerationModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
-        selectionWeight = selectionWeightProp.getDouble();
+        double selectionWeight = selectionWeightProp.getDouble();
         if(addRegenerationEnabled && maxRegenLevel>0 && diffCostPerLevelRegen>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new AddRegenerationModifier());
+            DifficultyManager.addDifficultyModifier(new AddRegenerationModifier(maxRegenLevel,diffCostPerLevelRegen,selectionWeight));
         }
 
 

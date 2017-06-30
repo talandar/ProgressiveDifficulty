@@ -14,10 +14,12 @@ public class FieryModifier extends DifficultyModifier {
 
     public static final String IDENTIFIER = "MOD_FIRE_ASPECT";
 
-    private static int costForFireAspect;
-    private static double selectionWeight;
+    private int costForFireAspect;
+    private double selectionWeight;
 
-    public FieryModifier(){
+    public FieryModifier(int costForFireAspect, double selectionWeight){
+        this.costForFireAspect = costForFireAspect;
+        this.selectionWeight = selectionWeight;
     }
 
     @Override
@@ -52,12 +54,12 @@ public class FieryModifier extends DifficultyModifier {
         boolean modifierEnabled = modifierEnabledProp.getBoolean();
         Property selectionWeightProp = config.get(IDENTIFIER,
                 "FireAspectModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
-        selectionWeight = selectionWeightProp.getDouble();
+        double selectionWeight = selectionWeightProp.getDouble();
         Property difficultyCostProp = config.get(IDENTIFIER,
                 "DifficultyCost",5,"Cost of the modifier.");
-        costForFireAspect = difficultyCostProp.getInt();
+        int costForFireAspect = difficultyCostProp.getInt();
         if(modifierEnabled && costForFireAspect>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new FieryModifier());
+            DifficultyManager.addDifficultyModifier(new FieryModifier(costForFireAspect,selectionWeight));
         }
     }
 }

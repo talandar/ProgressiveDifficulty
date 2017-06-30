@@ -18,11 +18,14 @@ public class AddStrengthModifier extends DifficultyModifier {
 
     private static final String IDENTIFIER = "MOD_STRENGTH";
 
-    private static int maxStrengthLevel;
-    private static int diffCostPerLevelStrength;
-    private static double selectionWeight;
+    private int maxStrengthLevel;
+    private int diffCostPerLevelStrength;
+    private double selectionWeight;
 
-    public AddStrengthModifier(){
+    public AddStrengthModifier(int maxStrengthLevel, int diffCostPerLevelStrength, double selectionWeight){
+        this.maxStrengthLevel = maxStrengthLevel;
+        this.diffCostPerLevelStrength = diffCostPerLevelStrength;
+        this.selectionWeight = selectionWeight;
     }
 
     @Override
@@ -62,15 +65,15 @@ public class AddStrengthModifier extends DifficultyModifier {
         boolean addStrengthEnabled = addStrengthModifierEnabledProp.getBoolean();
         Property strengthLevelMaxLevelProp = config.get(IDENTIFIER,
                 "StrengthModifierMaxLevel",3,"Maximum strength level added to the mob when this is triggered.  Each strength level is 1.5 hearts of extra damage per attack.");
-        maxStrengthLevel = strengthLevelMaxLevelProp.getInt();
+        int maxStrengthLevel = strengthLevelMaxLevelProp.getInt();
         Property difficultyCostPerStrengthLevelProp = config.get(IDENTIFIER,
                 "DifficultyCostPerStrengthLevel",15,"Cost of each level of strength.");
-        diffCostPerLevelStrength = difficultyCostPerStrengthLevelProp.getInt();
+        int diffCostPerLevelStrength = difficultyCostPerStrengthLevelProp.getInt();
         Property selectionWeightProp = config.get(IDENTIFIER,
                 "StrengthModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
-        selectionWeight = selectionWeightProp.getDouble();
+        double selectionWeight = selectionWeightProp.getDouble();
         if(addStrengthEnabled && maxStrengthLevel>0 && diffCostPerLevelStrength>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new AddStrengthModifier());
+            DifficultyManager.addDifficultyModifier(new AddStrengthModifier(maxStrengthLevel,diffCostPerLevelStrength,selectionWeight));
         }
 
 

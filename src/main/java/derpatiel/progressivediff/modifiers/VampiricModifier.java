@@ -15,11 +15,14 @@ public class VampiricModifier extends DifficultyModifier {
 
     public static final String IDENTIFIER = "MOD_VAMPIRIC";
 
-    private static int costForVampiric;
-    private static int maxInstances;
-    private static double selectionWeight;
+    private int maxInstances;
+    private int costForVampiric;
+    private double selectionWeight;
 
-    public VampiricModifier(){
+    public VampiricModifier(int maxInstances, int costForVampiric, double selectionWeight){
+        this.maxInstances = maxInstances;
+        this.costForVampiric = costForVampiric;
+        this.selectionWeight = selectionWeight;
     }
 
     @Override
@@ -57,15 +60,15 @@ public class VampiricModifier extends DifficultyModifier {
         boolean modifierEnabled = modifierEnabledProp.getBoolean();
         Property selectionWeightProp = config.get(IDENTIFIER,
                 "VampiricModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
-        selectionWeight = selectionWeightProp.getDouble();
+        double selectionWeight = selectionWeightProp.getDouble();
         Property difficultyCostProp = config.get(IDENTIFIER,
                 "DifficultyCost",5,"Cost of the modifier.");
-        costForVampiric = difficultyCostProp.getInt();
+        int costForVampiric = difficultyCostProp.getInt();
         Property maxInstanceProp = config.get(IDENTIFIER,
                 "MaxInstances", 5, "Maximum number of instances of the modifier that could be applied.");
-        maxInstances = maxInstanceProp.getInt();
+        int maxInstances = maxInstanceProp.getInt();
         if(modifierEnabled && costForVampiric>0 && selectionWeight>0 && maxInstances>0) {
-            DifficultyManager.addDifficultyModifier(new VampiricModifier());
+            DifficultyManager.addDifficultyModifier(new VampiricModifier(maxInstances,costForVampiric,selectionWeight));
         }
     }
 }

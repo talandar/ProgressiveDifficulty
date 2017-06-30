@@ -19,10 +19,12 @@ public class CreeperChargeModifier extends DifficultyModifier {
 
     private static final String IDENTIFIER = "MOD_CREEPER_PRECHARGE";
 
-    private static int diffCost;
-    private static double selectionWeight;
+    private int diffCost;
+    private double selectionWeight;
 
-    public CreeperChargeModifier(){
+    public CreeperChargeModifier(int diffCost, double selectionWeight){
+        this.diffCost = diffCost;
+        this.selectionWeight = selectionWeight;
     }
 
     @Override
@@ -67,12 +69,12 @@ public class CreeperChargeModifier extends DifficultyModifier {
         boolean prechargeEnabled = prechargeEnabledProp.getBoolean();
         Property selectionWeightProp = config.get(IDENTIFIER,
                 "CreeperPrechargeWeight",1.0d,"Weight that affects how often this modifier is selected.");
-        selectionWeight = selectionWeightProp.getDouble();
+        double selectionWeight = selectionWeightProp.getDouble();
         Property difficultyCostProp = config.get(IDENTIFIER,
                 "DifficultyCost",40,"Cost of applying the charge to the creeper.");
-        diffCost = difficultyCostProp.getInt();
+        int diffCost = difficultyCostProp.getInt();
         if(prechargeEnabled && diffCost>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new CreeperChargeModifier());
+            DifficultyManager.addDifficultyModifier(new CreeperChargeModifier(diffCost,selectionWeight));
         }
     }
 }

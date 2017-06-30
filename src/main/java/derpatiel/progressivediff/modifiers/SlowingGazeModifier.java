@@ -17,11 +17,14 @@ public class SlowingGazeModifier extends DifficultyModifier {
 
     private static final String IDENTIFIER = "MOD_SLOW_GAZE";
 
-    private static int maxLevel;
-    private static int diffCostPerLevel;
-    private static double selectionWeight;
+    private int maxLevel;
+    private int diffCostPerLevel;
+    private double selectionWeight;
 
-    public SlowingGazeModifier(){
+    public SlowingGazeModifier(int maxLevel, int diffCostPerLevel, double selectionWeight){
+        this.maxLevel = maxLevel;
+        this.diffCostPerLevel = diffCostPerLevel;
+        this.selectionWeight = selectionWeight;
     }
 
     @Override
@@ -58,15 +61,15 @@ public class SlowingGazeModifier extends DifficultyModifier {
         boolean modifierEnabled = modifierEnabledProp.getBoolean();
         Property SpeedLevelMaxLevelProp = config.get(IDENTIFIER,
                 "SlowModifierMaxLevel",3,"Maximum Slow level added to the target player when this is triggered.");
-        maxLevel = SpeedLevelMaxLevelProp.getInt();
+        int maxLevel = SpeedLevelMaxLevelProp.getInt();
         Property difficultyCostPerSpeedLevelProp = config.get(IDENTIFIER,
                 "DifficultyCostPerSlowLevel",30,"Cost of each level of Slow applied to the target player.");
-        diffCostPerLevel = difficultyCostPerSpeedLevelProp.getInt();
+        int diffCostPerLevel = difficultyCostPerSpeedLevelProp.getInt();
         Property selectionWeightProp = config.get(IDENTIFIER,
                 "ModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
-        selectionWeight = selectionWeightProp.getDouble();
+        double selectionWeight = selectionWeightProp.getDouble();
         if(modifierEnabled && maxLevel>0 && diffCostPerLevel>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new SlowingGazeModifier());
+            DifficultyManager.addDifficultyModifier(new SlowingGazeModifier(maxLevel,diffCostPerLevel,selectionWeight));
         }
 
 

@@ -20,11 +20,14 @@ public class AddResistanceModifier extends DifficultyModifier {
 
     private static final String IDENTIFIER = "MOD_RESISTANCE";
 
-    private static int maxResistanceLevel;
-    private static int diffCostPerLevelResistance;
-    private static double selectionWeight;
+    private int maxResistanceLevel;
+    private int diffCostPerLevelResistance;
+    private double selectionWeight;
 
-    public AddResistanceModifier(){
+    public AddResistanceModifier(int maxResistanceLevel, int diffCostPerLevelResistance, double selectionWeight){
+        this.maxResistanceLevel = maxResistanceLevel;
+        this.diffCostPerLevelResistance = diffCostPerLevelResistance;
+        this.selectionWeight = selectionWeight;
     }
 
     @Override
@@ -59,16 +62,16 @@ public class AddResistanceModifier extends DifficultyModifier {
         boolean addResistanceEnabled = addResistanceModifierEnabledProp.getBoolean();
         Property resistanceLevelMaxLevelProp = config.get(IDENTIFIER,
                 "ResistanceModifierMaxLevel",2,"Maximum resistance level added to the mob when this is triggered.  Each resistance level is a flat 20% damage reduction.  Level 5+ will make the mob invincible.");
-        maxResistanceLevel = resistanceLevelMaxLevelProp.getInt();
+        int maxResistanceLevel = resistanceLevelMaxLevelProp.getInt();
         Property difficultyCostPerResistanceLevelProp = config.get(IDENTIFIER,
                 "DifficultyCostPerResistLevel",20,"Cost of each level of resistance.");
 
-        diffCostPerLevelResistance = difficultyCostPerResistanceLevelProp.getInt();
+        int diffCostPerLevelResistance = difficultyCostPerResistanceLevelProp.getInt();
         Property selectionWeightProp = config.get(IDENTIFIER,
                 "ResistanceModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
-        selectionWeight = selectionWeightProp.getDouble();
+        double selectionWeight = selectionWeightProp.getDouble();
         if(addResistanceEnabled && maxResistanceLevel>0 && diffCostPerLevelResistance>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new AddResistanceModifier());
+            DifficultyManager.addDifficultyModifier(new AddResistanceModifier(maxResistanceLevel, diffCostPerLevelResistance, selectionWeight));
         }
 
 

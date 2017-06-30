@@ -16,11 +16,14 @@ public class AddHealthModifier extends DifficultyModifier {
 
     private static final String IDENTIFIER = "MOD_HEALTH";
 
-    private static int maxAddedHealth;
-    private static int diffCostPerHealth;
-    private static double selectionWeight;
+    private int maxAddedHealth;
+    private int diffCostPerHealth;
+    private double selectionWeight;
 
-    public AddHealthModifier(){
+    public AddHealthModifier(int maxAddedHealth, int diffCostPerHealth, double selectionWeight){
+        this.maxAddedHealth = maxAddedHealth;
+        this.diffCostPerHealth = diffCostPerHealth;
+        this.selectionWeight = selectionWeight;
     }
 
     @Override
@@ -56,15 +59,15 @@ public class AddHealthModifier extends DifficultyModifier {
         boolean addHealthModEnabled = addHealthModifierEnabledProp.getBoolean();
         Property selectionWeightProp = config.get(IDENTIFIER,
                 "HealthModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
-        selectionWeight = selectionWeightProp.getDouble();
+        double selectionWeight = selectionWeightProp.getDouble();
         Property healthModifierMaxAddedHealthProp = config.get(IDENTIFIER,
                 "HealthModifierMaxAddedHealth",20,"Maximum amount of health added to the mob.");
-        maxAddedHealth = healthModifierMaxAddedHealthProp.getInt();
+        int maxAddedHealth = healthModifierMaxAddedHealthProp.getInt();
         Property difficultyCostPerHealthProp = config.get(IDENTIFIER,
                 "DifficultyCostPerHealth",5,"Cost of each extra point of health.  Larger values will mean more difficult mobs will have less health, while smaller values will cause more difficult mobs to have lots of extra health.");
-        diffCostPerHealth = difficultyCostPerHealthProp.getInt();
+        int diffCostPerHealth = difficultyCostPerHealthProp.getInt();
         if(addHealthModEnabled && maxAddedHealth>0 && diffCostPerHealth>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new AddHealthModifier());
+            DifficultyManager.addDifficultyModifier(new AddHealthModifier(maxAddedHealth,diffCostPerHealth,selectionWeight));
         }
     }
 }

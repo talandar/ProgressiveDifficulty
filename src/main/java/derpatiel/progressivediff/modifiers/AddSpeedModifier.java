@@ -17,11 +17,14 @@ public class AddSpeedModifier extends DifficultyModifier {
 
     private static final String IDENTIFIER = "MOD_SPEED";
 
-    private static int maxSpeedLevel;
-    private static int diffCostPerLevelSpeed;
-    private static double selectionWeight;
+    private int maxSpeedLevel;
+    private int diffCostPerLevelSpeed;
+    private double selectionWeight;
 
-    public AddSpeedModifier(){
+    public AddSpeedModifier(int maxSpeedLevel, int diffCostPerLevelSpeed, double selectionWeight){
+        this.maxSpeedLevel = maxSpeedLevel;
+        this.diffCostPerLevelSpeed = diffCostPerLevelSpeed;
+        this.selectionWeight = selectionWeight;
     }
 
     @Override
@@ -55,15 +58,15 @@ public class AddSpeedModifier extends DifficultyModifier {
         boolean addSpeedEnabled = addSpeedModifierEnabledProp.getBoolean();
         Property SpeedLevelMaxLevelProp = config.get(IDENTIFIER,
                 "SpeedModifierMaxLevel",3,"Maximum Speed level added to the mob when this is triggered.  Each Speed level increases walking speed by 20%.");
-        maxSpeedLevel = SpeedLevelMaxLevelProp.getInt();
+        int maxSpeedLevel = SpeedLevelMaxLevelProp.getInt();
         Property difficultyCostPerSpeedLevelProp = config.get(IDENTIFIER,
                 "DifficultyCostPerSpeedLevel",10,"Cost of each level of Speed.");
-        diffCostPerLevelSpeed = difficultyCostPerSpeedLevelProp.getInt();
+        int diffCostPerLevelSpeed = difficultyCostPerSpeedLevelProp.getInt();
         Property selectionWeightProp = config.get(IDENTIFIER,
                 "SpeedModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
-        selectionWeight = selectionWeightProp.getDouble();
+        double selectionWeight = selectionWeightProp.getDouble();
         if(addSpeedEnabled && maxSpeedLevel>0 && diffCostPerLevelSpeed>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new AddSpeedModifier());
+            DifficultyManager.addDifficultyModifier(new AddSpeedModifier(maxSpeedLevel,diffCostPerLevelSpeed,selectionWeight));
         }
 
 

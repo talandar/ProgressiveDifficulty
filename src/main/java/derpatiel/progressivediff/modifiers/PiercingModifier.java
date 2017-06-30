@@ -16,10 +16,12 @@ public class PiercingModifier extends DifficultyModifier {
 
     public static final String IDENTIFIER = "MOD_PIERCING";
 
-    private static int costForPiercing;
-    private static double selectionWeight;
+    private int costForPiercing;
+    private double selectionWeight;
 
-    public PiercingModifier(){
+    public PiercingModifier(int costForPiercing, double selectionWeight){
+        this.costForPiercing = costForPiercing;
+        this.selectionWeight = selectionWeight;
     }
 
     @Override
@@ -54,12 +56,12 @@ public class PiercingModifier extends DifficultyModifier {
         boolean piercingModifierEnabled = piercingModifierEnabledProp.getBoolean();
         Property selectionWeightProp = config.get(IDENTIFIER,
                 "PiercingModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
-        selectionWeight = selectionWeightProp.getDouble();
+        double selectionWeight = selectionWeightProp.getDouble();
         Property difficultyCostProp = config.get(IDENTIFIER,
                 "DifficultyCost",5,"Cost of the modifier.  Low values will cause mobs to ignore armor more often.");
-        costForPiercing = difficultyCostProp.getInt();
+        int costForPiercing = difficultyCostProp.getInt();
         if(piercingModifierEnabled && costForPiercing>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new PiercingModifier());
+            DifficultyManager.addDifficultyModifier(new PiercingModifier(costForPiercing,selectionWeight));
         }
     }
 }
