@@ -1,9 +1,6 @@
 package derpatiel.progressivediff.controls;
 
-import derpatiel.progressivediff.DifficultyControl;
-import derpatiel.progressivediff.DifficultyManager;
-import derpatiel.progressivediff.MultiplePlayerCombineType;
-import derpatiel.progressivediff.SpawnEventDetails;
+import derpatiel.progressivediff.*;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.PlayerAreaStatAccumulator;
 import net.minecraft.entity.Entity;
@@ -23,22 +20,34 @@ public class SpecificMobKilledControl extends DifficultyControl {
 
     private MultiplePlayerCombineType type;
     private double difficultyPerHundredKills;
+    private int maxAddedDifficulty;
 
-    public SpecificMobKilledControl(MultiplePlayerCombineType type, double difficultyPerHundredKills){
+    public SpecificMobKilledControl(MultiplePlayerCombineType type, double difficultyPerHundredKills, int maxAddedDifficulty){
         this.type = type;
         this.difficultyPerHundredKills = difficultyPerHundredKills;
+        this.maxAddedDifficulty = maxAddedDifficulty;
     }
 
     @Override
     public int getChangeForSpawn(SpawnEventDetails details) {
 
         EntityList.EntityEggInfo eggInfo = EntityRegistry.getEntry(details.entity.getClass()).getEgg();
-        if(eggInfo==null)
+        if(eggInfo==null) {
+            if(DifficultyConfiguration.debugLogSpawns){
+                LOG.info("Tried to get kills for mob with class "+details.entity.getClass()+", but not spawn egg found.  Cannot count kills for this mob for difficulty.");
+            }
             return 0;
+        }
         StatBase stat = eggInfo.killEntityStat;
         int killedMobs = PlayerAreaStatAccumulator.getStatForPlayersInArea(type,stat,details.entity,128);
 
-        return (int)(((double)killedMobs * difficultyPerHundredKills) / 100);
+        int contribution = (int)(((double)killedMobs * difficultyPerHundredKills) / 100);
+
+        if(maxAddedDifficulty>=0){
+            contribution = Math.min(contribution,maxAddedDifficulty);
+        }
+
+        return contribution;
     }
 
     public static void readConfig(Configuration config) {
@@ -58,8 +67,11 @@ public class SpecificMobKilledControl extends DifficultyControl {
         }catch(Exception e){
             LOG.error("Invalid Multiple Player Combination type found for control with identifier "+IDENTIFIER+", found "+comboTypeStr+", using AVERAGE instead.");
         }
+        Property maxDifficultyContributionProp = config.get(IDENTIFIER,
+                "MaximumDifficultyContribution",-1,"Maximum difficulty this controller can contribute to the mobs score.  Negative values disable this maximum.");
+        int maxAddedDifficulty = maxDifficultyContributionProp.getInt();
         if (enableModifier && addedDifficultyPerHundredKills > 0){
-            DifficultyManager.addDifficultyControl(new SpecificMobKilledControl(type,addedDifficultyPerHundredKills));
+            DifficultyManager.addDifficultyControl(new SpecificMobKilledControl(type,addedDifficultyPerHundredKills,maxAddedDifficulty));
         }
     }
 }

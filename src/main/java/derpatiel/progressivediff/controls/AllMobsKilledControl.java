@@ -19,16 +19,22 @@ public class AllMobsKilledControl extends DifficultyControl {
 
     private MultiplePlayerCombineType type;
     private double difficultyPerHundredKills;
+    private int maximumDifficultyContribution;
 
-    public AllMobsKilledControl(MultiplePlayerCombineType type, double difficultyPerHundredKills){
+    public AllMobsKilledControl(MultiplePlayerCombineType type, double difficultyPerHundredKills, int maximumDifficultyContribution){
         this.type = type;
         this.difficultyPerHundredKills = difficultyPerHundredKills;
+        this.maximumDifficultyContribution = maximumDifficultyContribution;
     }
 
     @Override
     public int getChangeForSpawn(SpawnEventDetails details) {
         int killedMobs = PlayerAreaStatAccumulator.getStatForPlayersInArea(type,StatList.MOB_KILLS,details.entity,128);
-        return (int)(((double)killedMobs * difficultyPerHundredKills) / 100);
+        int contribution = (int)(((double)killedMobs * difficultyPerHundredKills) / 100);
+        if(maximumDifficultyContribution>=0){
+            contribution = Math.min(contribution,maximumDifficultyContribution);
+        }
+        return contribution;
     }
 
     public static void readConfig(Configuration config) {
@@ -48,8 +54,11 @@ public class AllMobsKilledControl extends DifficultyControl {
         }catch(Exception e){
             LOG.error("Invalid Multiple Player Combination type found for control with identifier "+IDENTIFIER+", found "+comboTypeStr+", using AVERAGE instead.");
         }
+        Property maxDifficultyContributionProp = config.get(IDENTIFIER,
+                "MaximumDifficultyContribution",-1,"Maximum difficulty this controller can contribute to the mobs score.  Negative values disable this maximum.");
+        int maxAddedDifficulty = maxDifficultyContributionProp.getInt();
         if (enableModifier && addedDifficultyPerHundredKills > 0){
-            DifficultyManager.addDifficultyControl(new AllMobsKilledControl(type,addedDifficultyPerHundredKills));
+            DifficultyManager.addDifficultyControl(new AllMobsKilledControl(type,addedDifficultyPerHundredKills,maxAddedDifficulty));
         }
     }
 }

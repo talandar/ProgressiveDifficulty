@@ -19,10 +19,12 @@ public class BlocksBrokenControl extends DifficultyControl {
 
     private MultiplePlayerCombineType type;
     private double difficultyPerHundredBlocks;
+    private int maxAddedDifficulty;
 
-    public BlocksBrokenControl(MultiplePlayerCombineType type, double difficultyPerHundredBlocks){
+    public BlocksBrokenControl(MultiplePlayerCombineType type, double difficultyPerHundredBlocks, int maxAddedDifficulty){
         this.type = type;
         this.difficultyPerHundredBlocks = difficultyPerHundredBlocks;
+        this.maxAddedDifficulty = maxAddedDifficulty;
     }
 
     @Override
@@ -36,7 +38,13 @@ public class BlocksBrokenControl extends DifficultyControl {
             return accum;
         });
 
-        return (int)(((double)brokenBlocks * difficultyPerHundredBlocks) / 100);
+        int contribution = (int)(((double)brokenBlocks * difficultyPerHundredBlocks) / 100);
+
+        if(maxAddedDifficulty>=0){
+            contribution = Math.min(contribution,maxAddedDifficulty);
+        }
+
+        return contribution;
     }
 
     public static void readConfig(Configuration config) {
@@ -56,8 +64,11 @@ public class BlocksBrokenControl extends DifficultyControl {
         }catch(Exception e){
             LOG.error("Invalid Multiple Player Combination type found for control with identifier "+IDENTIFIER+", found "+comboTypeStr+", using AVERAGE instead.");
         }
+        Property maxDifficultyContributionProp = config.get(IDENTIFIER,
+                "MaximumDifficultyContribution",-1,"Maximum difficulty this controller can contribute to the mobs score.  Negative values disable this maximum.");
+        int maxAddedDifficulty = maxDifficultyContributionProp.getInt();
         if (enableModifier && addedDifficultyPerHundredKills > 0){
-            DifficultyManager.addDifficultyControl(new BlocksBrokenControl(type,addedDifficultyPerHundredKills));
+            DifficultyManager.addDifficultyControl(new BlocksBrokenControl(type,addedDifficultyPerHundredKills,maxAddedDifficulty));
         }
     }
 }

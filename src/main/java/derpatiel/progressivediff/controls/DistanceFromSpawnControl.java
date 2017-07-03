@@ -15,9 +15,11 @@ public class DistanceFromSpawnControl extends DifficultyControl {
     private static final String IDENTIFIER = "CONTROL_SPAWN_DISTANCE";
 
     private double addedDifficultyPerHundredBlocks;
+    private int maxAddedDifficulty;
 
-    public DistanceFromSpawnControl(double addedDifficultyPerHundredBlocks){
+    public DistanceFromSpawnControl(double addedDifficultyPerHundredBlocks, int maxAddedDifficulty){
         this.addedDifficultyPerHundredBlocks = addedDifficultyPerHundredBlocks;
+        this.maxAddedDifficulty = maxAddedDifficulty;
     }
 
     @Override
@@ -26,7 +28,11 @@ public class DistanceFromSpawnControl extends DifficultyControl {
         BlockPos spawnPoint = details.entity.getEntityWorld().getSpawnPoint();
         double distanceFromSpawn = thisSpawnLoc.getDistance(spawnPoint.getX(),spawnPoint.getY(),spawnPoint.getZ());
         double hundredsOfBlocksFromSpawn = distanceFromSpawn/100.0d;
-        return (int)(hundredsOfBlocksFromSpawn * addedDifficultyPerHundredBlocks);
+        int contribution = (int)(hundredsOfBlocksFromSpawn * addedDifficultyPerHundredBlocks);
+        if(maxAddedDifficulty>=0){
+            contribution = Math.min(contribution,maxAddedDifficulty);
+        }
+        return contribution;
 
     }
 
@@ -37,8 +43,11 @@ public class DistanceFromSpawnControl extends DifficultyControl {
         Property addedDifficultyPerHundredBlocksProp = config.get(IDENTIFIER,
                 "AddedDifficultyPerHundredBlocks",1.0d,"Add this much difficulty per hundred blocks away from spawn.");
         double addedDifficultyPerHundredBlocks = addedDifficultyPerHundredBlocksProp.getDouble();
+        Property maxDifficultyContributionProp = config.get(IDENTIFIER,
+                "MaximumDifficultyContribution",-1,"Maximum difficulty this controller can contribute to the mobs score.  Negative values disable this maximum.");
+        int maxAddedDifficulty = maxDifficultyContributionProp.getInt();
         if(enabled && addedDifficultyPerHundredBlocks>0){
-            DifficultyManager.addDifficultyControl(new DistanceFromSpawnControl(addedDifficultyPerHundredBlocks));
+            DifficultyManager.addDifficultyControl(new DistanceFromSpawnControl(addedDifficultyPerHundredBlocks,maxAddedDifficulty));
         }
     }
 }

@@ -14,16 +14,22 @@ public class AdditionalPlayersControl extends DifficultyControl {
     private static final String IDENTIFIER = "CONTROL_EXTRA_PLAYERS";
 
     private int addedPerExtraPlayer;
+    private int maxExtraPlayers;
 
-    public AdditionalPlayersControl(int addedPerExtraPlayer){
+    public AdditionalPlayersControl(int addedPerExtraPlayer, int maxExtraPlayersCounted){
         this.addedPerExtraPlayer = addedPerExtraPlayer;
+        this.maxExtraPlayers = maxExtraPlayersCounted;
     }
 
     @Override
     public int getChangeForSpawn(SpawnEventDetails details) {
         List<EntityPlayer> players = details.entity.getEntityWorld().getEntitiesWithinAABB(EntityPlayer.class, details.entity.getEntityBoundingBox().expand(128,128,128));
-        if(players.size()>0) {
-            return addedPerExtraPlayer * (players.size() - 1);
+        int extraPlayers = players.size() - 1;
+        if(maxExtraPlayers>0){
+            extraPlayers = Math.min(extraPlayers,maxExtraPlayers);
+        }
+        if(extraPlayers>0) {
+            return addedPerExtraPlayer * extraPlayers;
         }
         return 0;
     }
@@ -35,8 +41,11 @@ public class AdditionalPlayersControl extends DifficultyControl {
         Property addedDifficultyPerExtraPlayerProp = config.get(IDENTIFIER,
                 "ExtraPlayerAddedDifficulty", 20, "Difficulty added to a mob for each player past the first in the spawn radius (128 blocks).");
         int addedDifficultyPerExtraPlayer = addedDifficultyPerExtraPlayerProp.getInt();
+        Property maxExtraPlayersProp = config.get(IDENTIFIER,
+                "MaxExtraPlayersCounted",-1,"The maximum number of extra players to count.  If this is set to one, the extra difficulty gets applied at most once, and so on.  A Negative number or zero disables the maximum.");
+        int maxExtraPlayersCounted = maxExtraPlayersProp.getInt();
         if (extraPlayersAddsDifficulty && addedDifficultyPerExtraPlayer > 0){
-            DifficultyManager.addDifficultyControl(new AdditionalPlayersControl(addedDifficultyPerExtraPlayer));
+            DifficultyManager.addDifficultyControl(new AdditionalPlayersControl(addedDifficultyPerExtraPlayer,maxExtraPlayersCounted));
         }
     }
 }

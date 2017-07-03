@@ -22,18 +22,26 @@ public class PlayerTimeInWorldControl extends DifficultyControl {
 
     private double addedDifficultyPerDay;
     private MultiplePlayerCombineType type;
+    private int maxAddedDifficulty;
 
 
-    public PlayerTimeInWorldControl(double addedDifficultyPerDay, MultiplePlayerCombineType combineType){
+    public PlayerTimeInWorldControl(double addedDifficultyPerDay, MultiplePlayerCombineType combineType, int maxAddedDifficulty){
         this.addedDifficultyPerDay = addedDifficultyPerDay;
         this.type = combineType;
+        this.maxAddedDifficulty = maxAddedDifficulty;
     }
 
     @Override
     public int getChangeForSpawn(SpawnEventDetails details) {
         int decidedTicks = PlayerAreaStatAccumulator.getStatForPlayersInArea(type,StatList.PLAY_ONE_MINUTE,details.entity,128);
         double days = ((double)decidedTicks)/(24000.0d);//minecraft day length
-        return (int)(addedDifficultyPerDay * days);
+        int contribution = (int)(addedDifficultyPerDay * days);
+
+        if(maxAddedDifficulty>=0){
+            contribution = Math.min(contribution, maxAddedDifficulty);
+        }
+
+        return contribution;
     }
 
     public static void readConfig(Configuration config) {
@@ -53,8 +61,11 @@ public class PlayerTimeInWorldControl extends DifficultyControl {
         }catch(Exception e){
             LOG.error("Invalid Multiple Player Combination type found for control with identifier "+IDENTIFIER+", found "+comboTypeStr+", using AVERAGE instead.");
         }
+        Property maxDifficultyContributionProp = config.get(IDENTIFIER,
+                "MaximumDifficultyContribution",-1,"Maximum difficulty this controller can contribute to the mobs score.  Negative values disable this maximum.");
+        int maxAddedDifficulty = maxDifficultyContributionProp.getInt();
         if (timeAddsDifficulty && addedDifficultyPerMinecraftDay > 0){
-            DifficultyManager.addDifficultyControl(new PlayerTimeInWorldControl(addedDifficultyPerMinecraftDay,type));
+            DifficultyManager.addDifficultyControl(new PlayerTimeInWorldControl(addedDifficultyPerMinecraftDay,type,maxAddedDifficulty));
         }
     }
 }
