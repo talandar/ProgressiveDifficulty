@@ -30,16 +30,9 @@ public class EventHandler {
 
     //occurs for every spawn.  Including ones that are later canceled for light or similar.
     @SubscribeEvent
-    public void onEntitySpawn(LivingSpawnEvent.CheckSpawn checkSpawnEvent){
+    public void onEntityCheckSpawn(LivingSpawnEvent.CheckSpawn checkSpawnEvent){
         if(checkSpawnEvent.getEntityLiving() instanceof  EntityLiving) {
             DifficultyManager.onCheckSpawnEvent(checkSpawnEvent);
-        }
-    }
-
-    @SubscribeEvent
-    public void onSpecialSpawn(LivingSpawnEvent.SpecialSpawn specialSpawnEvent){
-        if(specialSpawnEvent.getEntity() instanceof EntityLiving) {
-            DifficultyManager.onSpecialSpawnEvent(specialSpawnEvent);
         }
     }
 

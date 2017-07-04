@@ -55,7 +55,7 @@ public class DifficultyConfiguration {
 
             //controls
             DepthControl.readConfig(config);
-            //FromSpawnerControl.readConfig(config);
+            FromSpawnerControl.readConfig(config);
             AdditionalPlayersControl.readConfig(config);
             PlayerTimeInWorldControl.readConfig(config);
             DistanceFromSpawnControl.readConfig(config);
@@ -70,7 +70,7 @@ public class DifficultyConfiguration {
             AddStrengthModifier.readConfig(config);
             AddSpeedModifier.readConfig(config);
             CreeperChargeModifier.readConfig(config);
-            //PiercingModifier.readConfig(config); see issue#1, forge bug #3933
+            PiercingModifier.readConfig(config);
             AddRegenerationModifier.readConfig(config);
             FieryModifier.readConfig(config);
             VampiricModifier.readConfig(config);

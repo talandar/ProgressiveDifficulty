@@ -98,19 +98,10 @@ public class DifficultyManager {
             if (EntityFilter.shouldModifyEntity(checkSpawnEvent.getEntityLiving())) {
                 details.entity = (EntityLiving) checkSpawnEvent.getEntityLiving();
                 details.spawnEvent = checkSpawnEvent;
-                details.fromSpawner = false;
+                details.fromSpawner = checkSpawnEvent.isSpawner();
                 eventsThisTickByDimension.computeIfAbsent(details.entity.world.provider.getDimension(), thing -> new HashMap<>()).put(details.entity, details);
             }
         }
-    }
-
-    public static void onSpecialSpawnEvent(LivingSpawnEvent.SpecialSpawn specialSpawnEvent) {
-
-        SpawnEventDetails details = eventsThisTickByDimension.computeIfAbsent(specialSpawnEvent.getEntityLiving().world.provider.getDimension(), thing -> new HashMap<>()).get(specialSpawnEvent.getEntityLiving());
-        if(details!=null){
-            details.fromSpawner=true;
-        }
-
     }
 
     public static void onJoinWorldEvent(EntityJoinWorldEvent joinWorldEvent) {
