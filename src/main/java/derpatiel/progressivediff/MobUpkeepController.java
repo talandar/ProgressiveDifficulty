@@ -26,7 +26,7 @@ public class MobUpkeepController {
     }
 
     private static void doUpkeep(World world){
-        List<EntityLiving> modifiedEntities = world.getEntities(EntityLiving.class,(entity)-> MobNBTHandler.isModifiedMob(entity) && !entity.isDead);
+        List<EntityLiving> modifiedEntities = MobNBTHandler.getModifiedEntities(world);
 
         for(EntityLiving entity : modifiedEntities){
             Map<String,Integer> changes = MobNBTHandler.getChangeMap(entity);

@@ -1,6 +1,7 @@
 package derpatiel.progressivediff;
 
 import derpatiel.progressivediff.util.LOG;
+import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -38,7 +39,7 @@ public class ServerCommand extends CommandBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "\"progdiff sync\"";
+        return "\"progdiff [sync|killmodified]\"";
     }
 
     @Override
@@ -49,6 +50,11 @@ public class ServerCommand extends CommandBase {
         if(args[0].equalsIgnoreCase("sync")){
             DifficultyConfiguration.syncConfig();
             sendChat(sender, new String[]{"Synced config."});
+        }else if(args[0].equalsIgnoreCase("killmodified")){
+            sendChat(sender, new String[]{"Killing all modified mobs in this dimension."});
+            MobNBTHandler.getModifiedEntities(sender.getEntityWorld()).stream().forEach(mob->{
+                mob.setDead();
+            });
         }else{
             sendChat(sender,usage);
         }
@@ -67,7 +73,8 @@ public class ServerCommand extends CommandBase {
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
             String[] validCompletions = new String[]{
-                    "sync"
+                    "sync",
+                    "killmodified"
             };
             return CommandBase.getListOfStringsMatchingLastWord(args, validCompletions);
         }

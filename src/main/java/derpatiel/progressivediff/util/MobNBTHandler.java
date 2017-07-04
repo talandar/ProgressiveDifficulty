@@ -4,7 +4,9 @@ import com.google.common.collect.Maps;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
+import java.util.List;
 import java.util.Map;
 
 public class MobNBTHandler {
@@ -41,5 +43,9 @@ public class MobNBTHandler {
             compound.setInteger(id,num);
         }
         entity.getEntityData().setTag(ROOT_NBT_KEY,compound);
+    }
+
+    public static List<EntityLiving> getModifiedEntities(World world){
+        return world.getEntities(EntityLiving.class,(entity)-> MobNBTHandler.isModifiedMob(entity) && !entity.isDead);
     }
 }
