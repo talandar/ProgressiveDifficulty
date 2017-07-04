@@ -55,11 +55,11 @@ public class DifficultyConfiguration {
 
             //controls
             DepthControl.readConfig(config);
-            FromSpawnerControl.readConfig(config);
+            //FromSpawnerControl.readConfig(config); //need forge pr #4075 merged to 1.11.2
             AdditionalPlayersControl.readConfig(config);
             PlayerTimeInWorldControl.readConfig(config);
             DistanceFromSpawnControl.readConfig(config);
-            //AchievementControl.readConfig(config);
+            AchievementControl.readConfig(config);
             AllMobsKilledControl.readConfig(config);
             SpecificMobKilledControl.readConfig(config);
             BlocksBrokenControl.readConfig(config);
@@ -70,7 +70,7 @@ public class DifficultyConfiguration {
             AddStrengthModifier.readConfig(config);
             AddSpeedModifier.readConfig(config);
             CreeperChargeModifier.readConfig(config);
-            PiercingModifier.readConfig(config);
+            //PiercingModifier.readConfig(config);  //need forge pr #4106 merged to 1.11.2
             AddRegenerationModifier.readConfig(config);
             FieryModifier.readConfig(config);
             VampiricModifier.readConfig(config);

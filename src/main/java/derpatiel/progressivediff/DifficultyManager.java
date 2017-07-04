@@ -98,7 +98,7 @@ public class DifficultyManager {
             if (EntityFilter.shouldModifyEntity(checkSpawnEvent.getEntityLiving())) {
                 details.entity = (EntityLiving) checkSpawnEvent.getEntityLiving();
                 details.spawnEvent = checkSpawnEvent;
-                details.fromSpawner = checkSpawnEvent.isSpawner();
+                details.fromSpawner = false;//checkSpawnEvent.isSpawner(); //need forge pr #4075 merged to 1.11.2
                 eventsThisTickByDimension.computeIfAbsent(details.entity.world.provider.getDimension(), thing -> new HashMap<>()).put(details.entity, details);
             }
         }
