@@ -3,7 +3,7 @@
   "modid": "progressivedifficulty",
   "name": "Progressive Difficulty",
   "description": "Highly configurable way to control mob difficulty.",
-  "version": "${version}",
+  "version": "",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
