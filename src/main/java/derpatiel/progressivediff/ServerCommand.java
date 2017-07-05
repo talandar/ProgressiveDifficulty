@@ -2,6 +2,7 @@ package derpatiel.progressivediff;
 
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.MobNBTHandler;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -16,8 +17,12 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.apache.commons.lang3.builder.Diff;
 
 import javax.annotation.Nullable;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,7 +34,13 @@ public class ServerCommand extends CommandBase {
     private String[] usage = new String[]{
             "progdiff (Progressive Difficulty) help:",
             "\"progdiff sync\" sync the config for the server",
-            "     Useful for testing difficulty configs.",
+            "    Useful for testing difficulty configs.",
+            "\"progdiff killmodified\" kill modified mobs in the ",
+            "    same dimension as the player",
+            "\"progdiff advancements\" print a list of all loaded",
+            "    advancements to the configuration directory as",
+            "    progdiff_advancements.txt",
+            "    (filters out advancements under minecraft:recipes/*)"
     };
 
     @Override
@@ -39,15 +50,14 @@ public class ServerCommand extends CommandBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "\"progdiff [sync|killmodified]\"";
+        return "\"progdiff [sync|killmodified|advancements]\"";
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(args.length==0 || args.length>1){
             sendChat(sender,usage);
-        }
-        if(args[0].equalsIgnoreCase("sync")){
+        }else if(args[0].equalsIgnoreCase("sync")){
             DifficultyConfiguration.syncConfig();
             sendChat(sender, new String[]{"Synced config."});
         }else if(args[0].equalsIgnoreCase("killmodified")){
@@ -55,6 +65,33 @@ public class ServerCommand extends CommandBase {
             MobNBTHandler.getModifiedEntities(sender.getEntityWorld()).stream().forEach(mob->{
                 mob.setDead();
             });
+        }else if(args[0].equalsIgnoreCase("advancements")){
+            File configDir = DifficultyConfiguration.config.getConfigFile().getParentFile();
+            File advancementsFile = new File(configDir,"progdiff_advancements.txt");
+            try(BufferedWriter writer = new BufferedWriter(new FileWriter(advancementsFile))){
+                for(Advancement advancement : sender.getServer().getAdvancementManager().getAdvancements()){
+                    String id = advancement.getId().toString();
+                    if(!id.startsWith("minecraft:recipes")) {
+                        writer.write(advancement.getId().toString());
+                        writer.newLine();
+                    }
+                }
+            }catch(Exception e){
+                sendChat(sender, new String[]{
+                        "There was a problem writing the advancements file.",
+                });
+                if(advancementsFile.exists()){
+                    try {
+                        advancementsFile.delete();
+                    }catch(Exception e2){
+                        sendChat(sender, new String[]{
+                                "There was a problem deleting the broken file.",
+                                "Please manually delete the \"progdiff_advancements.txt\" file before trying again."
+                        });
+                    }
+                }
+            }
+
         }else{
             sendChat(sender,usage);
         }
@@ -74,7 +111,8 @@ public class ServerCommand extends CommandBase {
         if (args.length == 1) {
             String[] validCompletions = new String[]{
                     "sync",
-                    "killmodified"
+                    "killmodified",
+                    "advancements"
             };
             return CommandBase.getListOfStringsMatchingLastWord(args, validCompletions);
         }
