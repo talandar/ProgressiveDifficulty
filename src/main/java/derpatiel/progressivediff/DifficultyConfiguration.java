@@ -59,7 +59,7 @@ public class DifficultyConfiguration {
             AdditionalPlayersControl.readConfig(config);
             PlayerTimeInWorldControl.readConfig(config);
             DistanceFromSpawnControl.readConfig(config);
-            //AchievementControl.readConfig(config);
+            AdvancementControl.readConfig(config);
             AllMobsKilledControl.readConfig(config);
             SpecificMobKilledControl.readConfig(config);
             BlocksBrokenControl.readConfig(config);
