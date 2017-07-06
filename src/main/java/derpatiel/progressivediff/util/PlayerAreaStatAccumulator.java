@@ -11,7 +11,7 @@ import java.util.function.Function;
 public class PlayerAreaStatAccumulator {
 
     public static int getStatForPlayersInArea(MultiplePlayerCombineType type, EntityLiving entity, int radius, Function<EntityPlayerMP,Integer> function){
-        List<EntityPlayerMP> playersInRange = entity.getEntityWorld().getEntitiesWithinAABB(EntityPlayerMP.class, entity.getEntityBoundingBox().expand(128,128,128));
+        List<EntityPlayerMP> playersInRange = entity.getEntityWorld().getEntitiesWithinAABB(EntityPlayerMP.class, entity.getEntityBoundingBox().grow(radius));
         int counter = 0;
         if(playersInRange.size()>0) {
             switch (type) {
@@ -24,7 +24,7 @@ public class PlayerAreaStatAccumulator {
                     counter = avgSum / playersInRange.size();
                     break;
                 case CLOSEST:
-                    EntityPlayerMP closestPlayer = (EntityPlayerMP) entity.getEntityWorld().getClosestPlayerToEntity(entity, 128.0d);
+                    EntityPlayerMP closestPlayer = (EntityPlayerMP) entity.getEntityWorld().getClosestPlayerToEntity(entity, radius);
                     counter = function.apply(closestPlayer);
                     break;
                 case MAX:
@@ -56,6 +56,8 @@ public class PlayerAreaStatAccumulator {
                     counter = sum;
                     break;
             }
+        }else{
+            LOG.info("that's a long range spawn!");
         }
         return counter;
     }

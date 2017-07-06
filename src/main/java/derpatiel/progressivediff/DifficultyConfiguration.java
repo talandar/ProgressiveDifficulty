@@ -5,6 +5,8 @@ import derpatiel.progressivediff.modifiers.*;
 import derpatiel.progressivediff.util.LOG;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Optional;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -81,6 +83,7 @@ public class DifficultyConfiguration {
 
             EntityFilter.loadConfig(config);
 
+            handleModInteractionConfigs(config);
 
             DifficultyManager.generateWeightMap();
 
@@ -98,4 +101,9 @@ public class DifficultyConfiguration {
         }
     }
 
+    private static void handleModInteractionConfigs(Configuration config) {
+        if(Loader.isModLoaded("hardcorequesting")) {
+            HQMController.loadConfig(config);
+        }
+    }
 }
