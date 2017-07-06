@@ -29,7 +29,9 @@ public class ServerCommand extends CommandBase {
     private String[] usage = new String[]{
             "progdiff (Progressive Difficulty) help:",
             "\"progdiff sync\" sync the config for the server",
-            "     Useful for testing difficulty configs.",
+            "    Useful for testing difficulty configs.",
+            "\"progdiff killmodified\" kill modified mobs in the ",
+            "    same dimension as the player"
     };
 
     @Override
