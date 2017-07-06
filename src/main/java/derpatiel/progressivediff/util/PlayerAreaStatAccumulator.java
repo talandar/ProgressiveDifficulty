@@ -11,7 +11,7 @@ import java.util.function.Function;
 public class PlayerAreaStatAccumulator {
 
     public static int getStatForPlayersInArea(MultiplePlayerCombineType type, EntityLiving entity, int radius, Function<EntityPlayerMP,Integer> function){
-        List<EntityPlayerMP> playersInRange = entity.getEntityWorld().getEntitiesWithinAABB(EntityPlayerMP.class, entity.getEntityBoundingBox().expand(128,128,128));
+        List<EntityPlayerMP> playersInRange = entity.getEntityWorld().getEntitiesWithinAABB(EntityPlayerMP.class, entity.getEntityBoundingBox().grow(radius));
         int counter = 0;
         if(playersInRange.size()>0) {
             switch (type) {

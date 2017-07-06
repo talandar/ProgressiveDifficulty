@@ -23,7 +23,7 @@ public class AdditionalPlayersControl extends DifficultyControl {
 
     @Override
     public int getChangeForSpawn(SpawnEventDetails details) {
-        List<EntityPlayer> players = details.entity.getEntityWorld().getEntitiesWithinAABB(EntityPlayer.class, details.entity.getEntityBoundingBox().expand(128,128,128));
+        List<EntityPlayer> players = details.entity.getEntityWorld().getEntitiesWithinAABB(EntityPlayer.class, details.entity.getEntityBoundingBox().grow(128));
         int extraPlayers = players.size() - 1;
         if(maxExtraPlayers>0){
             extraPlayers = Math.min(extraPlayers,maxExtraPlayers);
