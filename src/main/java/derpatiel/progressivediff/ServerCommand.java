@@ -31,7 +31,12 @@ public class ServerCommand extends CommandBase {
             "\"progdiff sync\" sync the config for the server",
             "    Useful for testing difficulty configs.",
             "\"progdiff killmodified\" kill modified mobs in the ",
-            "    same dimension as the player"
+            "    same dimension as the player",
+            "\"progdiff killmobs\" kill all mobs in the ",
+            "    same dimension as the player",
+            "\"progdiff advancements\" print a list of all loaded",
+            "    advancements to the configuration directory as",
+            "    progdiff_advancements.txt",
     };
 
     @Override
@@ -41,7 +46,7 @@ public class ServerCommand extends CommandBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "\"progdiff [sync|killmodified]\"";
+        return "\"progdiff [sync|killmodified|killmobs]\"";
     }
 
     @Override
@@ -54,9 +59,10 @@ public class ServerCommand extends CommandBase {
             sendChat(sender, new String[]{"Synced config."});
         }else if(args[0].equalsIgnoreCase("killmodified")){
             sendChat(sender, new String[]{"Killing all modified mobs in this dimension."});
-            MobNBTHandler.getModifiedEntities(sender.getEntityWorld()).stream().forEach(mob->{
-                mob.setDead();
-            });
+            MobNBTHandler.getModifiedEntities(sender.getEntityWorld()).stream().forEach(mob->mob.setDead());
+        }else if(args[0].equalsIgnoreCase("killmobs")) {
+            sendChat(sender, new String[]{"Killing all mobs in this dimension."});
+            sender.getEntityWorld().getEntities(EntityLiving.class, (entity) -> !entity.isDead).stream().forEach(mob -> mob.setDead());
         }else{
             sendChat(sender,usage);
         }
@@ -76,7 +82,8 @@ public class ServerCommand extends CommandBase {
         if (args.length == 1) {
             String[] validCompletions = new String[]{
                     "sync",
-                    "killmodified"
+                    "killmodified",
+                    "killmobs"
             };
             return CommandBase.getListOfStringsMatchingLastWord(args, validCompletions);
         }
