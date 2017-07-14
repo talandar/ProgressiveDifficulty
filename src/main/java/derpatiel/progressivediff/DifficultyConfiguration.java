@@ -67,7 +67,7 @@ public class DifficultyConfiguration {
             //modifiers
             AddHealthModifier.readConfig(config);
             AddResistanceModifier.readConfig(config);
-            AddStrengthModifier.readConfig(config);
+            AddDamageModifier.readConfig(config);
             AddSpeedModifier.readConfig(config);
             CreeperChargeModifier.readConfig(config);
             PiercingModifier.readConfig(config);

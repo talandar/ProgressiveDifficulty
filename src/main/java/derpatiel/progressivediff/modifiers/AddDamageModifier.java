@@ -2,29 +2,27 @@ package derpatiel.progressivediff.modifiers;
 
 import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.DifficultyModifier;
-import derpatiel.progressivediff.MobUpkeepController;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
-import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
 /**
  * Created by Jim on 4/30/2017.
  */
-public class AddStrengthModifier extends DifficultyModifier {
+public class AddDamageModifier extends DifficultyModifier {
 
-    private static final String IDENTIFIER = "MOD_STRENGTH";
+    private static final String IDENTIFIER = "MOD_EXTRA_DAMAGE";
 
-    private int maxStrengthLevel;
-    private int diffCostPerLevelStrength;
+    private int maxExtraDamage;
+    private int diffCostPerDamage;
     private double selectionWeight;
 
-    public AddStrengthModifier(int maxStrengthLevel, int diffCostPerLevelStrength, double selectionWeight){
-        this.maxStrengthLevel = maxStrengthLevel;
-        this.diffCostPerLevelStrength = diffCostPerLevelStrength;
+    public AddDamageModifier(int maxExtraDamage, int diffCostPerDamage, double selectionWeight){
+        this.maxExtraDamage = maxExtraDamage;
+        this.diffCostPerDamage = diffCostPerDamage;
         this.selectionWeight = selectionWeight;
     }
 
@@ -35,18 +33,18 @@ public class AddStrengthModifier extends DifficultyModifier {
 
     @Override
     public int getMaxInstances() {
-        return maxStrengthLevel;
+        return maxExtraDamage;
     }
 
     @Override
-    public void handleUpkeepEvent(int numChanges, EntityLiving entity) {
-        entity.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, MobUpkeepController.POTION_EFFECT_LENGTH,numChanges,false,true));
-
+    public void handleSpawnEvent(int numInstances, EntityLiving entity) {
+        IAttributeInstance maxDamageAttribute = entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+        maxDamageAttribute.setBaseValue(maxDamageAttribute.getBaseValue() + numInstances);
     }
 
     @Override
     public int costPerChange() {
-        return diffCostPerLevelStrength;
+        return diffCostPerDamage;
     }
 
     @Override
@@ -61,19 +59,19 @@ public class AddStrengthModifier extends DifficultyModifier {
 
     public static void readConfig(Configuration config) {
         Property addStrengthModifierEnabledProp = config.get(IDENTIFIER,
-                "EnableAddStrengthModifier",true,"Enable the add strength modifier.  This adds the strength potion effect to mobs on spawn.");
+                "EnableAddDamageModifier",true,"Enable the add damage modifier.  This adds damage points (half-hearts) to the mobs damage.");
         boolean addStrengthEnabled = addStrengthModifierEnabledProp.getBoolean();
         Property strengthLevelMaxLevelProp = config.get(IDENTIFIER,
-                "StrengthModifierMaxLevel",3,"Maximum strength level added to the mob when this is triggered.  Each strength level is 1.5 hearts of extra damage per attack.");
+                "DamageModifierMaxLevel",5,"Maximum extra damage added to the mob when this is triggered.");
         int maxStrengthLevel = strengthLevelMaxLevelProp.getInt();
         Property difficultyCostPerStrengthLevelProp = config.get(IDENTIFIER,
-                "DifficultyCostPerStrengthLevel",15,"Cost of each level of strength.");
+                "DifficultyCostPerDamage",6,"Cost of each damage point.");
         int diffCostPerLevelStrength = difficultyCostPerStrengthLevelProp.getInt();
         Property selectionWeightProp = config.get(IDENTIFIER,
-                "StrengthModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
+                "DamageModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
         double selectionWeight = selectionWeightProp.getDouble();
         if(addStrengthEnabled && maxStrengthLevel>0 && diffCostPerLevelStrength>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new AddStrengthModifier(maxStrengthLevel,diffCostPerLevelStrength,selectionWeight));
+            DifficultyManager.addDifficultyModifier(new AddDamageModifier(maxStrengthLevel,diffCostPerLevelStrength,selectionWeight));
         }
 
 
