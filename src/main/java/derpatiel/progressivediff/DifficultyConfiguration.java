@@ -78,6 +78,7 @@ public class DifficultyConfiguration {
             HungryGazeModifier.readConfig(config);
             WeakGazeModifier.readConfig(config);
             FatigueGazeModifier.readConfig(config);
+            OnHitEffectModifier.getFromConfig.apply(config).forEach(mod->DifficultyManager.addDifficultyModifier(mod));
 
             EntityFilter.loadConfig(config);
 
