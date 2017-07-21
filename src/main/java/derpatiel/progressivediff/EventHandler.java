@@ -53,9 +53,14 @@ public class EventHandler {
                 && MobNBTHandler.isModifiedMob((EntityLiving)causeMob)){
             Map<String,Integer> changes = MobNBTHandler.getChangeMap((EntityLiving)causeMob);
             for(String change : changes.keySet()){
-                DifficultyModifier modifier = DifficultyManager.getModifierById(change);
-                if(modifier!=null) {
-                    modifier.handleDamageEvent(event);
+                try {
+                    DifficultyModifier modifier = DifficultyManager.getModifierById(change);
+                    if (modifier != null) {
+                        modifier.handleDamageEvent(event);
+                    }
+                }catch(Exception e){
+                    LOG.warn("Error applying modifier at onLivingAttack.  Mob was "+causeMob.getName()+", Modifier was "+change+".  Please report to Progressive Difficulty Developer!");
+                    LOG.warn("\tCaught Exception had message "+e.getMessage());
                 }
             }
         }

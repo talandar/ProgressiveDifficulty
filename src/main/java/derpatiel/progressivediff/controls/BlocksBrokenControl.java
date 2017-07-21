@@ -47,6 +47,11 @@ public class BlocksBrokenControl extends DifficultyControl {
         return contribution;
     }
 
+    @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
+
     public static void readConfig(Configuration config) {
         Property mobsKilledAffectsDifficultyEnabledProp = config.get(IDENTIFIER,
                 "EnableBlocksBrokenAffectsDifficulty", true, "Difficulty is added based on the number of blocks broken by the player.");

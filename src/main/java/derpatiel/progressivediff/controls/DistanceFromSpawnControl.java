@@ -36,6 +36,11 @@ public class DistanceFromSpawnControl extends DifficultyControl {
 
     }
 
+    @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
+
     public static void readConfig(Configuration config) {
         Property distanceFromSpawnAddsProp = config.get(IDENTIFIER,
                 "DistanceFromSpawnAddsDifficulty", true,"Distance from the spawn of the world adds difficulty to mobs.");

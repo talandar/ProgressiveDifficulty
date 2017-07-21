@@ -38,6 +38,11 @@ public class HQMController extends DifficultyControl {
         return 0;
     }
 
+    @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
+
     public static void loadConfig(Configuration config){
         Property enableHQMRepControllerProp = config.get(IDENTIFIER,
                 "EnableHQMRepController", true, "Difficulty is added based on a reputation in HQM.");

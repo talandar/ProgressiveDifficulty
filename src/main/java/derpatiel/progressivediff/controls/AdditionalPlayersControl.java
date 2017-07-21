@@ -34,6 +34,11 @@ public class AdditionalPlayersControl extends DifficultyControl {
         return 0;
     }
 
+    @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
+
     public static void readConfig(Configuration config) {
         Property extraPlayersAffectsDifficultyEnabled = config.get(IDENTIFIER,
                 "ExtraPlayersAffectsDifficulty", true, "Extra Players in the spawn radius changes the difficulty of a mob.  Each player past the first adds difficulty.");

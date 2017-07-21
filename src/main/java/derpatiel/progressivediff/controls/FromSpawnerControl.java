@@ -25,6 +25,11 @@ public class FromSpawnerControl extends DifficultyControl {
         return details.fromSpawner ? addedDifficulty : 0;
     }
 
+    @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
+
     public static void readConfig(Configuration config) {
         Property addedDifficultyFromSpawnerProp = config.get(IDENTIFIER,
                 "SpawnerAddedDifficulty", 10,"Difficulty added to a mob if it is from a spawner.");

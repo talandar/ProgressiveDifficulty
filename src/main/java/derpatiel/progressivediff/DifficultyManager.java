@@ -44,7 +44,12 @@ public class DifficultyManager {
         int difficulty = baseDifficulty;
         difficulty+=EntityFilter.getMobSpawnCost(details.entity);
         for(DifficultyControl control : controls){
-            difficulty+=control.getChangeForSpawn(details);
+            try {
+                difficulty += control.getChangeForSpawn(details);
+            }catch(Exception e){
+                LOG.warn("Error adding difficulty with control during spawn event.  Mob was "+details.entity.getName()+", Controller was "+control.getIdentifier()+".  Please report to Progressive Difficulty Developer!");
+                LOG.warn("\tCaught Exception had message "+e.getMessage());
+            }
         }
 
         return difficulty;
@@ -77,7 +82,12 @@ public class DifficultyManager {
         String log = "For spawn of " + EntityList.getEntityString(entity) + " with difficulty " + initialDifficulty + ", ("+determinedDifficulty+" remaining) decided to use: ";
         for (String modId : thisSpawnModifiers.keySet()) {
             int numToApply = thisSpawnModifiers.get(modId);
-            modifiers.get(modId).handleSpawnEvent(numToApply, entity);
+            try {
+                modifiers.get(modId).handleSpawnEvent(numToApply, entity);
+            }catch(Exception e){
+                LOG.warn("Error applying modifier at spawn.  Mob was "+entity.getName()+", Modifier was "+modId+".  Please report to Progressive Difficulty Developer!");
+                LOG.warn("\tCaught Exception had message "+e.getMessage());
+            }
             log = log + modId + " " + numToApply + " times, ";
         }
         if(DifficultyConfiguration.debugLogSpawns) {

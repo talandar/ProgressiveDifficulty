@@ -28,6 +28,11 @@ public class DepthControl extends DifficultyControl {
         }
     }
 
+    @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
+
     public static void readConfig(Configuration config) {
         Property doesDepthControlDifficulty = config.get(IDENTIFIER,
                 "DepthEffectsDifficulty", true, "Depth of spawn changes the difficulty of a mob.  Lower Y value means higher difficulty.  Y>=64 (ocean level and above) is unaffected.");
