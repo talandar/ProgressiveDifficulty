@@ -2,6 +2,7 @@ package derpatiel.progressivediff;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -31,9 +32,14 @@ public class MobUpkeepController {
         for(EntityLiving entity : modifiedEntities){
             Map<String,Integer> changes = MobNBTHandler.getChangeMap(entity);
             for(String change : changes.keySet()){
-                DifficultyModifier modifier = DifficultyManager.getModifierById(change);
-                if(modifier!=null) {
-                    modifier.handleUpkeepEvent(changes.get(change),entity);
+                try {
+                    DifficultyModifier modifier = DifficultyManager.getModifierById(change);
+                    if (modifier != null) {
+                        modifier.handleUpkeepEvent(changes.get(change), entity);
+                    }
+                }catch(Exception e){
+                    LOG.warn("Error applying modifier at upkeep.  Mob was "+entity.getName()+", Modifier was "+change+".  Please report to Progressive Difficulty Developer!");
+                    LOG.warn("\tCaught Exception had message "+e.getMessage());
                 }
             }
         }

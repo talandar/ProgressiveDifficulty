@@ -37,6 +37,11 @@ public class AllMobsKilledControl extends DifficultyControl {
         return contribution;
     }
 
+    @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
+
     public static void readConfig(Configuration config) {
         Property mobsKilledAffectsDifficultyEnabledProp = config.get(IDENTIFIER,
                 "EnableMobsKilledAffectsDifficulty", true, "Difficulty is added based on the number of mobs players have killed.");

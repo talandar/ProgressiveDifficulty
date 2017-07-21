@@ -48,6 +48,11 @@ public class AdvancementControl extends DifficultyControl {
         return sum;
     }
 
+    @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
+
     public static void readConfig(Configuration config) {
         Property playerAchievementsAffectDifficultyProp = config.get(IDENTIFIER,
                 "EnableAchievementsAffectDifficulty", true, "Difficulty is added based on achievements the player has.");

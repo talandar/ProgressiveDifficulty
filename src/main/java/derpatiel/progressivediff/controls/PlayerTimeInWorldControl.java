@@ -44,6 +44,11 @@ public class PlayerTimeInWorldControl extends DifficultyControl {
         return contribution;
     }
 
+    @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
+
     public static void readConfig(Configuration config) {
         Property extraPlayersAffectsDifficultyEnabled = config.get(IDENTIFIER,
                 "EnableTimeInWorldAddsDifficulty", true, "Difficulty is added based on the time players have been logged in to the world.");

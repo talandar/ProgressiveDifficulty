@@ -39,7 +39,9 @@ public class AddDamageModifier extends DifficultyModifier {
     @Override
     public void handleSpawnEvent(int numInstances, EntityLiving entity) {
         IAttributeInstance maxDamageAttribute = entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-        maxDamageAttribute.setBaseValue(maxDamageAttribute.getBaseValue() + numInstances);
+        if(maxDamageAttribute!=null) {
+            maxDamageAttribute.setBaseValue(maxDamageAttribute.getBaseValue() + numInstances);
+        }
     }
 
     @Override
