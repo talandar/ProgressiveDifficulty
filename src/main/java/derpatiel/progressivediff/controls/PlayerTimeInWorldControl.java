@@ -1,20 +1,18 @@
 package derpatiel.progressivediff.controls;
 
+import com.google.common.collect.Lists;
 import derpatiel.progressivediff.DifficultyControl;
-import derpatiel.progressivediff.DifficultyManager;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.MultiplePlayerCombineType;
 import derpatiel.progressivediff.SpawnEventDetails;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.PlayerAreaStatAccumulator;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class PlayerTimeInWorldControl extends DifficultyControl {
 
@@ -49,7 +47,8 @@ public class PlayerTimeInWorldControl extends DifficultyControl {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config) {
+    public static Function<Configuration,List<DifficultyControl>> getFromConfig = config -> {
+        List<DifficultyControl> returns = Lists.newArrayList();
         Property extraPlayersAffectsDifficultyEnabled = config.get(IDENTIFIER,
                 "EnableTimeInWorldAddsDifficulty", true, "Difficulty is added based on the time players have been logged in to the world.");
         boolean timeAddsDifficulty = extraPlayersAffectsDifficultyEnabled.getBoolean();
@@ -70,7 +69,8 @@ public class PlayerTimeInWorldControl extends DifficultyControl {
                 "MaximumDifficultyContribution",-1,"Maximum difficulty this controller can contribute to the mobs score.  Negative values disable this maximum.");
         int maxAddedDifficulty = maxDifficultyContributionProp.getInt();
         if (timeAddsDifficulty && addedDifficultyPerMinecraftDay > 0){
-            DifficultyManager.addDifficultyControl(new PlayerTimeInWorldControl(addedDifficultyPerMinecraftDay,type,maxAddedDifficulty));
+            returns.add(new PlayerTimeInWorldControl(addedDifficultyPerMinecraftDay,type,maxAddedDifficulty));
         }
-    }
+        return returns;
+    };
 }

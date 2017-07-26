@@ -1,17 +1,18 @@
 package derpatiel.progressivediff.controls;
 
+import com.google.common.collect.Lists;
 import derpatiel.progressivediff.DifficultyControl;
-import derpatiel.progressivediff.DifficultyManager;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.MultiplePlayerCombineType;
 import derpatiel.progressivediff.SpawnEventDetails;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.PlayerAreaStatAccumulator;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.stats.StatList;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class AllMobsKilledControl extends DifficultyControl {
 
@@ -42,7 +43,8 @@ public class AllMobsKilledControl extends DifficultyControl {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config) {
+    public static Function<Configuration,List<DifficultyControl>> getFromConfig = config -> {
+        List<DifficultyControl> returns = Lists.newArrayList();
         Property mobsKilledAffectsDifficultyEnabledProp = config.get(IDENTIFIER,
                 "EnableMobsKilledAffectsDifficulty", true, "Difficulty is added based on the number of mobs players have killed.");
         boolean enableModifier = mobsKilledAffectsDifficultyEnabledProp.getBoolean();
@@ -63,7 +65,8 @@ public class AllMobsKilledControl extends DifficultyControl {
                 "MaximumDifficultyContribution",-1,"Maximum difficulty this controller can contribute to the mobs score.  Negative values disable this maximum.");
         int maxAddedDifficulty = maxDifficultyContributionProp.getInt();
         if (enableModifier && addedDifficultyPerHundredKills > 0){
-            DifficultyManager.addDifficultyControl(new AllMobsKilledControl(type,addedDifficultyPerHundredKills,maxAddedDifficulty));
+            returns.add(new AllMobsKilledControl(type,addedDifficultyPerHundredKills,maxAddedDifficulty));
         }
-    }
+        return returns;
+    };
 }

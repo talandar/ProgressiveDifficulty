@@ -1,111 +1,175 @@
 package derpatiel.progressivediff;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import derpatiel.progressivediff.controls.*;
+import derpatiel.progressivediff.modifiers.*;
 import derpatiel.progressivediff.util.LOG;
-import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
-
-import static derpatiel.progressivediff.DifficultyConfiguration.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class DifficultyManager {
 
-    private static double[] cumulativeWeight;
-    private static String[] modifierKey;
-    private static double totalWeight;
+    private static File rootProgDiffConfigDir=null;
 
-    private static final List<DifficultyControl> controls = Lists.newArrayList();
-    private static final Map<String,DifficultyModifier> modifiers = Maps.newHashMap();
+    private static final List<Function<Configuration, List<DifficultyModifier>>> modifierConstructors = Lists.newArrayList();
+    private static final List<Function<Configuration, List<DifficultyControl>>> controlConstructors = Lists.newArrayList();
 
     private static final Map<Integer,Map<EntityLiving,SpawnEventDetails>> eventsThisTickByDimension = Maps.newHashMap();
 
-    public static void addDifficultyControl(DifficultyControl control){
-        controls.add(control);
-    }
-    public static void addDifficultyModifier(DifficultyModifier modifier){
-        modifiers.put(modifier.getIdentifier(),modifier);
+    private static final TreeSet<Region> regions = new TreeSet<>();
+    private static final Map<String,Region> regionsByName = Maps.newHashMap();
+
+    //general configs
+    public static boolean enabled;
+    public static boolean debugLogSpawns = false;
+    public static boolean isBlacklistMode = true;
+    public static final List<String> mobBlackWhiteList = Lists.newArrayList();
+
+    private static String[] defaultBlacklist = new String[]{
+            "Donkey",
+            "Mule",
+            "Bat",
+            "Pig",
+            "Sheep",
+            "Cow",
+            "Chicken",
+            "Squid",
+            "Wolf",
+            "MushroomCow",
+            "SnowMan",
+            "Ozelot",
+            "VillagerGolem",
+            "Horse",
+            "Rabbit",
+            "Llama",
+            "Parrot",
+            "Villager"
+    };
+
+    public static void registerModifier(Function<Configuration, List<DifficultyModifier>> constructor) {
+        modifierConstructors.add(constructor);
     }
 
-    public static void clearModifiersAndControls(){
-        controls.clear();
-        modifiers.clear();
+    public static List<DifficultyModifier> buildModifiersFromConfig(Configuration config){
+        List<DifficultyModifier> modifiers = Lists.newArrayList();
+        for(Function<Configuration,List<DifficultyModifier>> constructor : modifierConstructors){
+            modifiers.addAll(constructor.apply(config));
+        }
+        return modifiers;
+    }
+    public static List<DifficultyControl> buildControlsFromConfig(Configuration config){
+        List<DifficultyControl> controls = Lists.newArrayList();
+        for(Function<Configuration,List<DifficultyControl>> constructor : controlConstructors){
+            controls.addAll(constructor.apply(config));
+        }
+        return controls;
     }
 
-    public static void onWorldTick(int dimensionId){
-        eventsThisTickByDimension.computeIfAbsent(dimensionId, thing -> new HashMap<>()).clear();
+    public static void registerControl(Function<Configuration, List<DifficultyControl>> constructor) {
+        controlConstructors.add(constructor);
     }
 
-    private static int determineDifficultyForSpawnEvent(SpawnEventDetails details){
-        int difficulty = baseDifficulty;
-        difficulty+=EntityFilter.getMobSpawnCost(details.entity);
-        for(DifficultyControl control : controls){
-            try {
-                difficulty += control.getChangeForSpawn(details);
-            }catch(Exception e){
-                LOG.warn("Error adding difficulty with control during spawn event.  Mob was "+details.entity.getName()+", Controller was "+control.getIdentifier()+".  Please report to Progressive Difficulty Developer!");
-                LOG.warn("\tCaught Exception had message "+e.getMessage());
+    public static void setBaseConfigDir(File modConfigurationDirectory) {
+        rootProgDiffConfigDir = new File(modConfigurationDirectory, ProgressiveDifficulty.MODID);
+        if (!rootProgDiffConfigDir.exists()) {
+            rootProgDiffConfigDir.mkdirs();
+        }
+    }
+
+    public static File getConfigDir(){
+        return rootProgDiffConfigDir;
+    }
+
+    public static void syncConfig() {
+        regions.clear();
+        regionsByName.clear();
+        if(!rootProgDiffConfigDir.exists()){
+            rootProgDiffConfigDir.mkdirs();
+        }
+        File defaultConfigFile = new File(rootProgDiffConfigDir, ProgressiveDifficulty.MODID+".cfg");
+        Configuration defaultConfig = new Configuration(defaultConfigFile);
+        //read root config.
+        try {
+            defaultConfig.load();
+            Property isDifficultyChangeEnabledProp = defaultConfig.get(Configuration.CATEGORY_GENERAL,
+                    "DifficultyControlEnabled", true, "Allow ProgressiveDifficulty to control difficulty of mob spawns.");
+            boolean controlEnabled = isDifficultyChangeEnabledProp.getBoolean();
+            Property debugLogSpawnsProp = defaultConfig.get(Configuration.CATEGORY_GENERAL,
+                    "debugSpawnDetails", false, "Send messages to the log detailing computed costs of mobs and which modifiers have been chosen for them.");
+            debugLogSpawns = debugLogSpawnsProp.getBoolean();
+
+            Property blacklistProp = defaultConfig.get(Configuration.CATEGORY_GENERAL,"BlacklistMode",true,"All mobs are modified, except those that are in the blacklist.  If set to false, only those in the mob list are modified.  Boss-type mobs are never modified.");
+            isBlacklistMode = blacklistProp.getBoolean();
+
+            Property mobListProp = defaultConfig.get(Configuration.CATEGORY_GENERAL,"MobList",defaultBlacklist,"List of mobs, either blacklist or whitelisted for modification by this mod.  See BlacklistMode.");
+            mobBlackWhiteList.clear();
+            mobBlackWhiteList.addAll(Sets.newHashSet(mobListProp.getStringList()));
+
+            enabled=controlEnabled;
+            if (!controlEnabled) {
+                //mod is effectively disabled.
+                return;
+            }
+        } catch (Exception e) {
+            //failed to read config!?
+            LOG.error("FAILED TO READ BASE CONFIG FOR ProgressiveDifficulty.  Message was: " + e.getMessage());
+            StringWriter stream = new StringWriter();
+            PrintWriter writer = new PrintWriter(stream);
+            e.printStackTrace(writer);
+            LOG.error(stream.toString());
+        } finally {
+            if (defaultConfig.hasChanged()) {
+                defaultConfig.save();
             }
         }
 
-        return difficulty;
-    }
-
-
-    private static void makeDifficultyChanges(EntityLiving entity, int determinedDifficulty, Random rand) {
-        Map<String, Integer> thisSpawnModifiers = Maps.newHashMap();
-        int initialDifficulty = determinedDifficulty;
-        int failCount = 0;
-        while (determinedDifficulty > allowedMargin && failCount < maxFailCount) {
-            DifficultyModifier pickedModifier = pickModifierFromList(rand);
-            boolean failed = true;
-            if (pickedModifier.costPerChange() <= (determinedDifficulty + allowedMargin) && pickedModifier.validForEntity(entity)) {
-                //add mod to list, IFF not past max
-                int numAlreadyInList = thisSpawnModifiers.computeIfAbsent(pickedModifier.getIdentifier(), result -> 0);
-                if (numAlreadyInList < pickedModifier.getMaxInstances()) {
-                    thisSpawnModifiers.put(pickedModifier.getIdentifier(), 1 + thisSpawnModifiers.get(pickedModifier.getIdentifier()));
-                    //reduce remainder of difficulty
-                    determinedDifficulty -= pickedModifier.costPerChange();
-                    failed = false;
-                    failCount = 0;
-                }
-            }
-            if (failed) {
-                failCount++;
-            }
+        List<String> regionNames = Lists.newArrayList();
+        File[] subFiles = rootProgDiffConfigDir.listFiles();
+        if(subFiles!=null){
+            regionNames.addAll(Arrays.stream(subFiles)
+                    .filter(path->path.isDirectory())
+                    .map(file->file.getName())
+                    .collect(Collectors.toList()));
         }
 
-        String log = "For spawn of " + EntityList.getEntityString(entity) + " with difficulty " + initialDifficulty + ", ("+determinedDifficulty+" remaining) decided to use: ";
-        for (String modId : thisSpawnModifiers.keySet()) {
-            int numToApply = thisSpawnModifiers.get(modId);
-            try {
-                modifiers.get(modId).handleSpawnEvent(numToApply, entity);
-            }catch(Exception e){
-                LOG.warn("Error applying modifier at spawn.  Mob was "+entity.getName()+", Modifier was "+modId+".  Please report to Progressive Difficulty Developer!");
-                LOG.warn("\tCaught Exception had message "+e.getMessage());
-            }
-            log = log + modId + " " + numToApply + " times, ";
+        if(!regionNames.contains("default")){
+            regionNames.add("default");
         }
-        if(DifficultyConfiguration.debugLogSpawns) {
-            LOG.info(log);
+        for(String regionName : regionNames){
+            Region region = new Region(regionName);
+            region.readConfig();
+            regions.add(region);
+            regionsByName.put(regionName,region);
         }
-        if(thisSpawnModifiers.size()>0) {
-            MobNBTHandler.setChangeMap(entity,thisSpawnModifiers);
+        LOG.info("read "+regions.size()+" regions. They were (in increasing size):");
+        for(Region r : regions){
+            LOG.info(r.getName()+" with volume "+r.getVolume());
         }
-    }
-
-    public static DifficultyModifier getModifierById(String id){
-        return modifiers.get(id);
     }
 
     public static void onCheckSpawnEvent(LivingSpawnEvent.CheckSpawn checkSpawnEvent) {
-        if(DifficultyConfiguration.controlEnabled) {
+        if(enabled) {
             SpawnEventDetails details = new SpawnEventDetails();
-            if (EntityFilter.shouldModifyEntity(checkSpawnEvent.getEntityLiving())) {
+            if (shouldModifyEntity(checkSpawnEvent.getEntityLiving())) {
                 details.entity = (EntityLiving) checkSpawnEvent.getEntityLiving();
                 details.spawnEvent = checkSpawnEvent;
                 details.fromSpawner = checkSpawnEvent.isSpawner();
@@ -114,45 +178,81 @@ public class DifficultyManager {
         }
     }
 
+    public static void onWorldTick(int dimensionId){
+        eventsThisTickByDimension.computeIfAbsent(dimensionId, thing -> new HashMap<>()).clear();
+    }
+
+    public static void registerBaseModControlsAndModifiers(){
+        //controls
+        registerControl(DepthControl.getFromConfig);
+        registerControl(FromSpawnerControl.getFromConfig);
+        registerControl(AdditionalPlayersControl.getFromConfig);
+        registerControl(PlayerTimeInWorldControl.getFromConfig);
+        registerControl(DistanceFromSpawnControl.getFromConfig);
+        registerControl(AdvancementControl.getFromConfig);
+        registerControl(AllMobsKilledControl.getFromConfig);
+        registerControl(SpecificMobKilledControl.getFromConfig);
+        registerControl(BlocksBrokenControl.getFromConfig);
+
+        //modifiers
+        registerModifier(AddHealthModifier.getFromConfig);
+        registerModifier(AddResistanceModifier.getFromConfig);
+        registerModifier(AddDamageModifier.getFromConfig);
+        registerModifier(AddSpeedModifier.getFromConfig);
+        registerModifier(CreeperChargeModifier.getFromConfig);
+        registerModifier(PiercingModifier.getFromConfig);
+        registerModifier(AddRegenerationModifier.getFromConfig);
+        registerModifier(FieryModifier.getFromConfig);
+        registerModifier(VampiricModifier.getFromConfig);
+        registerModifier(SlowingGazeModifier.getFromConfig);
+        registerModifier(HungryGazeModifier.getFromConfig);
+        registerModifier(WeakGazeModifier.getFromConfig);
+        registerModifier(FatigueGazeModifier.getFromConfig);
+        registerModifier(OnHitEffectModifier.getFromConfig);
+    }
+
+    public static boolean shouldModifyEntity(EntityLivingBase entity){
+        if(entity==null || !entity.isNonBoss() || entity instanceof EntityPlayer)
+            return false;
+        if(mobBlackWhiteList.contains(EntityList.getEntityString(entity))){
+            return !isBlacklistMode;
+        }
+        return isBlacklistMode;
+    }
+
     public static void onJoinWorldEvent(EntityJoinWorldEvent joinWorldEvent) {
         //we actually got to this step, so lets do something with it.
         //note: we check this conversion up in the caller of this class.  should be safe.
-        EntityLiving mobToSpawn = (EntityLiving)joinWorldEvent.getEntity();
+        EntityLiving mobToSpawn = (EntityLiving) joinWorldEvent.getEntity();
         SpawnEventDetails details = eventsThisTickByDimension.computeIfAbsent(joinWorldEvent.getEntity().world.provider.getDimension(), thing -> new HashMap<>()).get(mobToSpawn);
-        if(details!=null) {
-            int difficulty = determineDifficultyForSpawnEvent(details);
-            if(difficulty<0 && DifficultyConfiguration.negativeDifficultyPreventsSpawn){
+        if (details != null) {
+            //find region
+            Region homeRegion = null;
+            LOG.info("find region for spawn:");
+            for(Region region : regions) {
+                LOG.info("\tcheck if in " + region.getName());
+                if (region.isPosInRegion(joinWorldEvent.getEntity().getPosition())) {
+                    LOG.info("\tIS in region " + region.getName());
+                    homeRegion = region;
+                    break;
+                }
+            }
+            int difficulty = homeRegion.determineDifficultyForSpawnEvent(details);
+            if(difficulty<0 && homeRegion.doesNegativeDifficultyPreventSpawn()){
                 int chance = joinWorldEvent.getWorld().rand.nextInt(100);
                 if(Math.abs(difficulty)>=chance){
                     joinWorldEvent.setCanceled(true);
                     return;
                 }
             }
-            if(difficulty>=threshold) {
-                makeDifficultyChanges(mobToSpawn, difficulty, joinWorldEvent.getWorld().rand);
+            if(difficulty>=homeRegion.getThreshold()) {
+                homeRegion.makeDifficultyChanges(mobToSpawn, difficulty, joinWorldEvent.getWorld().rand);
             }
         }
     }
 
-    public static void generateWeightMap() {
-        cumulativeWeight = new double[modifiers.size()];
-        modifierKey = new String[modifiers.size()];
-        totalWeight = 0.0d;
-        int count=0;
-        for(DifficultyModifier modifier : modifiers.values()){
-            totalWeight+=modifier.getWeight();
-            cumulativeWeight[count]=totalWeight;
-            modifierKey[count]=modifier.getIdentifier();
-            count++;
-        }
-    }
-    private static DifficultyModifier pickModifierFromList(Random rand) {
-        double weightToFind = rand.nextDouble() * totalWeight;
-        for(int i=0;i<cumulativeWeight.length;i++){
-            if(weightToFind<cumulativeWeight[i]){
-                return modifiers.get(modifierKey[i]);
-            }
-        }
-        return null;
+    public static Region getRegion(String regionName) {
+        return regionsByName.getOrDefault(regionName,regionsByName.get("default"));
     }
 }
+

@@ -1,11 +1,15 @@
 package derpatiel.progressivediff.controls;
 
+import com.google.common.collect.Lists;
 import derpatiel.progressivediff.DifficultyControl;
-import derpatiel.progressivediff.DifficultyManager;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.SpawnEventDetails;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Jim on 5/1/2017.
@@ -41,7 +45,8 @@ public class DistanceFromSpawnControl extends DifficultyControl {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config) {
+    public static Function<Configuration,List<DifficultyControl>> getFromConfig = config -> {
+        List<DifficultyControl> returns = Lists.newArrayList();
         Property distanceFromSpawnAddsProp = config.get(IDENTIFIER,
                 "DistanceFromSpawnAddsDifficulty", true,"Distance from the spawn of the world adds difficulty to mobs.");
         boolean enabled = distanceFromSpawnAddsProp.getBoolean();
@@ -52,7 +57,8 @@ public class DistanceFromSpawnControl extends DifficultyControl {
                 "MaximumDifficultyContribution",-1,"Maximum difficulty this controller can contribute to the mobs score.  Negative values disable this maximum.");
         int maxAddedDifficulty = maxDifficultyContributionProp.getInt();
         if(enabled && addedDifficultyPerHundredBlocks>0){
-            DifficultyManager.addDifficultyControl(new DistanceFromSpawnControl(addedDifficultyPerHundredBlocks,maxAddedDifficulty));
+            returns.add(new DistanceFromSpawnControl(addedDifficultyPerHundredBlocks,maxAddedDifficulty));
         }
-    }
+        return returns;
+    };
 }

@@ -1,18 +1,17 @@
 package derpatiel.progressivediff.controls;
 
+import com.google.common.collect.Lists;
 import derpatiel.progressivediff.*;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.PlayerAreaStatAccumulator;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.stats.StatBase;
-import net.minecraft.stats.StatList;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class SpecificMobKilledControl extends DifficultyControl {
 
@@ -33,7 +32,7 @@ public class SpecificMobKilledControl extends DifficultyControl {
 
         EntityList.EntityEggInfo eggInfo = EntityRegistry.getEntry(details.entity.getClass()).getEgg();
         if(eggInfo==null) {
-            if(DifficultyConfiguration.debugLogSpawns){
+            if(DifficultyManager.debugLogSpawns){
                 LOG.info("Tried to get kills for mob with class "+details.entity.getClass()+", but not spawn egg found.  Cannot count kills for this mob for difficulty.");
             }
             return 0;
@@ -55,7 +54,8 @@ public class SpecificMobKilledControl extends DifficultyControl {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config) {
+    public static Function<Configuration,List<DifficultyControl>> getFromConfig = config -> {
+        List<DifficultyControl> returns = Lists.newArrayList();
         Property mobsKilledAffectsDifficultyEnabledProp = config.get(IDENTIFIER,
                 "EnableSpecificMobKilledAffectsDifficulty", true, "Difficulty is added based on the number of the mob to be spawned that players have killed.");
         boolean enableModifier = mobsKilledAffectsDifficultyEnabledProp.getBoolean();
@@ -76,7 +76,8 @@ public class SpecificMobKilledControl extends DifficultyControl {
                 "MaximumDifficultyContribution",-1,"Maximum difficulty this controller can contribute to the mobs score.  Negative values disable this maximum.");
         int maxAddedDifficulty = maxDifficultyContributionProp.getInt();
         if (enableModifier && addedDifficultyPerHundredKills > 0){
-            DifficultyManager.addDifficultyControl(new SpecificMobKilledControl(type,addedDifficultyPerHundredKills,maxAddedDifficulty));
+            returns.add(new SpecificMobKilledControl(type,addedDifficultyPerHundredKills,maxAddedDifficulty));
         }
-    }
+        return returns;
+    };
 }

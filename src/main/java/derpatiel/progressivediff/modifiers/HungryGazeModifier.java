@@ -1,6 +1,7 @@
 package derpatiel.progressivediff.modifiers;
 
-import derpatiel.progressivediff.DifficultyManager;
+import com.google.common.collect.Lists;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.DifficultyModifier;
 import derpatiel.progressivediff.MobUpkeepController;
 import net.minecraft.entity.EntityLiving;
@@ -9,6 +10,9 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Jim on 4/30/2017.
@@ -55,7 +59,8 @@ public class HungryGazeModifier extends DifficultyModifier {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config) {
+    public static Function<Configuration,List<DifficultyModifier>> getFromConfig = config -> {
+        List<DifficultyModifier> returns = Lists.newArrayList();
         Property modifierEnabledProp = config.get(IDENTIFIER,
                 "EnableHungryGazeModifier",true,"Enable the Hungry Gaze modifier.  This modifier adds the hunger potion effect to the target player of the mob, if the mob can see the player");
         boolean modifierEnabled = modifierEnabledProp.getBoolean();
@@ -69,9 +74,8 @@ public class HungryGazeModifier extends DifficultyModifier {
                 "ModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
         double selectionWeight = selectionWeightProp.getDouble();
         if(modifierEnabled && maxLevel>0 && diffCostPerLevel>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new HungryGazeModifier(maxLevel,diffCostPerLevel,selectionWeight));
+            returns.add(new HungryGazeModifier(maxLevel,diffCostPerLevel,selectionWeight));
         }
-
-
-    }
+        return returns;
+    };
 }

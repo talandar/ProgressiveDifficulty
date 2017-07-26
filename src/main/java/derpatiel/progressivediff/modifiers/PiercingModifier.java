@@ -1,13 +1,14 @@
 package derpatiel.progressivediff.modifiers;
 
-import derpatiel.progressivediff.DifficultyManager;
+import com.google.common.collect.Lists;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.DifficultyModifier;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Jim on 4/30/2017.
@@ -50,7 +51,8 @@ public class PiercingModifier extends DifficultyModifier {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config){
+    public static Function<Configuration,List<DifficultyModifier>> getFromConfig = config -> {
+        List<DifficultyModifier> returns = Lists.newArrayList();
         Property piercingModifierEnabledProp = config.get(IDENTIFIER,
                 "EnablePiercingModifier",true,"Enable the piercing modifier.  This allows mobs to do damage that ignores armor.");
         boolean piercingModifierEnabled = piercingModifierEnabledProp.getBoolean();
@@ -61,7 +63,8 @@ public class PiercingModifier extends DifficultyModifier {
                 "DifficultyCost",5,"Cost of the modifier.  Low values will cause mobs to ignore armor more often.");
         int costForPiercing = difficultyCostProp.getInt();
         if(piercingModifierEnabled && costForPiercing>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new PiercingModifier(costForPiercing,selectionWeight));
+            returns.add(new PiercingModifier(costForPiercing,selectionWeight));
         }
-    }
+        return returns;
+    };
 }

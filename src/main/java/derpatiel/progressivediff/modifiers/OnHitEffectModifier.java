@@ -1,7 +1,6 @@
 package derpatiel.progressivediff.modifiers;
 
 import com.google.common.collect.Lists;
-import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.DifficultyModifier;
 import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.EntityLiving;
@@ -12,10 +11,8 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.fml.common.Loader;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Function;
 
 public class OnHitEffectModifier extends DifficultyModifier {

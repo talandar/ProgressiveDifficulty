@@ -1,12 +1,15 @@
 package derpatiel.progressivediff.controls;
 
-import derpatiel.progressivediff.DifficultyConfiguration;
+import com.google.common.collect.Lists;
 import derpatiel.progressivediff.DifficultyControl;
-import derpatiel.progressivediff.DifficultyManager;
+import derpatiel.progressivediff.DifficultyModifier;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.SpawnEventDetails;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+
+import java.util.List;
+import java.util.function.Function;
 
 public class DepthControl extends DifficultyControl {
 
@@ -33,7 +36,8 @@ public class DepthControl extends DifficultyControl {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config) {
+    public static Function<Configuration,List<DifficultyControl>> getFromConfig = config -> {
+        List<DifficultyControl> returns = Lists.newArrayList();
         Property doesDepthControlDifficulty = config.get(IDENTIFIER,
                 "DepthEffectsDifficulty", true, "Depth of spawn changes the difficulty of a mob.  Lower Y value means higher difficulty.  Y>=64 (ocean level and above) is unaffected.");
         boolean depthControlsDifficulty = doesDepthControlDifficulty.getBoolean();
@@ -41,7 +45,8 @@ public class DepthControl extends DifficultyControl {
                 "DepthAddedDifficulty", 0.2d, "Difficulty added to a mob for each level below Y=64 it spawns at.");
         double addedDifficultyPerBlockDepth = addedDifficultyPerBlockDepthProp.getDouble();
         if (depthControlsDifficulty && addedDifficultyPerBlockDepth > 0){
-            DifficultyManager.addDifficultyControl(new DepthControl(addedDifficultyPerBlockDepth));
+            returns.add(new DepthControl(addedDifficultyPerBlockDepth));
         }
-    }
+        return returns;
+    };
 }

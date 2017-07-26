@@ -3,7 +3,7 @@ package derpatiel.progressivediff.controls;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import derpatiel.progressivediff.DifficultyControl;
-import derpatiel.progressivediff.DifficultyManager;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.MultiplePlayerCombineType;
 import derpatiel.progressivediff.SpawnEventDetails;
 import derpatiel.progressivediff.util.LOG;
@@ -13,7 +13,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 
 public class AdvancementControl extends DifficultyControl {
@@ -53,7 +56,8 @@ public class AdvancementControl extends DifficultyControl {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config) {
+    public static Function<Configuration,List<DifficultyControl>> getFromConfig = config -> {
+        List<DifficultyControl> returns = Lists.newArrayList();
         Property playerAchievementsAffectDifficultyProp = config.get(IDENTIFIER,
                 "EnableAchievementsAffectDifficulty", true, "Difficulty is added based on achievements the player has.");
         boolean achievementsAddDifficulty = playerAchievementsAffectDifficultyProp.getBoolean();
@@ -91,7 +95,8 @@ public class AdvancementControl extends DifficultyControl {
             LOG.error("Invalid Multiple Player Combination type found for control with identifier "+IDENTIFIER+", found "+comboTypeStr+", using AVERAGE instead.");
         }
         if (achievementsAddDifficulty && nameMap.size() > 0){
-            DifficultyManager.addDifficultyControl(new AdvancementControl(nameMap,type));
+            returns.add(new AdvancementControl(nameMap,type));
         }
-    }
+        return returns;
+    };
 }

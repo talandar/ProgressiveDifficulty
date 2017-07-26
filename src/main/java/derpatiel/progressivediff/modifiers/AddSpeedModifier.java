@@ -1,14 +1,17 @@
 package derpatiel.progressivediff.modifiers;
 
-import derpatiel.progressivediff.DifficultyManager;
+import com.google.common.collect.Lists;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.DifficultyModifier;
 import derpatiel.progressivediff.MobUpkeepController;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Jim on 4/30/2017.
@@ -52,7 +55,8 @@ public class AddSpeedModifier extends DifficultyModifier {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config) {
+    public static Function<Configuration,List<DifficultyModifier>> getFromConfig = config -> {
+        List<DifficultyModifier> returns = Lists.newArrayList();
         Property addSpeedModifierEnabledProp = config.get(IDENTIFIER,
                 "EnableAddSpeedModifier",true,"Enable the add Speed modifier.  This adds the Speed potion effect to mobs on spawn.");
         boolean addSpeedEnabled = addSpeedModifierEnabledProp.getBoolean();
@@ -66,9 +70,9 @@ public class AddSpeedModifier extends DifficultyModifier {
                 "SpeedModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
         double selectionWeight = selectionWeightProp.getDouble();
         if(addSpeedEnabled && maxSpeedLevel>0 && diffCostPerLevelSpeed>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new AddSpeedModifier(maxSpeedLevel,diffCostPerLevelSpeed,selectionWeight));
+            returns.add(new AddSpeedModifier(maxSpeedLevel,diffCostPerLevelSpeed,selectionWeight));
         }
 
-
-    }
+        return returns;
+    };
 }
