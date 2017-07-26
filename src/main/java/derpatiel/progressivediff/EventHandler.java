@@ -1,19 +1,14 @@
 package derpatiel.progressivediff;
 
-import derpatiel.progressivediff.modifiers.FieryModifier;
-import derpatiel.progressivediff.modifiers.PiercingModifier;
-import derpatiel.progressivediff.modifiers.VampiricModifier;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -52,9 +47,12 @@ public class EventHandler {
                 && event.getEntity() instanceof EntityPlayer
                 && MobNBTHandler.isModifiedMob((EntityLiving)causeMob)){
             Map<String,Integer> changes = MobNBTHandler.getChangeMap((EntityLiving)causeMob);
+            String regionName = MobNBTHandler.getEntityRegion((EntityLiving)causeMob);
+            Region mobRegion = DifficultyManager.getRegion(regionName);
+            String mobId = EntityList.getEntityString(causeMob);
             for(String change : changes.keySet()){
                 try {
-                    DifficultyModifier modifier = DifficultyManager.getModifierById(change);
+                    DifficultyModifier modifier = mobRegion.getModifierForMobById(mobId,change);
                     if (modifier != null) {
                         modifier.handleDamageEvent(event);
                     }

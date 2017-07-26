@@ -1,17 +1,17 @@
 package derpatiel.progressivediff.modifiers;
 
-import derpatiel.progressivediff.DifficultyConfiguration;
-import derpatiel.progressivediff.DifficultyManager;
+import com.google.common.collect.Lists;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.DifficultyModifier;
 import derpatiel.progressivediff.MobUpkeepController;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Jim on 4/30/2017.
@@ -56,7 +56,7 @@ public class AddResistanceModifier extends DifficultyModifier {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config) {
+    public static Function<Configuration, List<DifficultyModifier>> getFromConfig = config -> {
         Property addResistanceModifierEnabledProp = config.get(IDENTIFIER,
                 "EnableAddResistanceModifier",true,"Enable the add resistance modifier.  This adds the resistance potion effect to mobs on spawn.");
         boolean addResistanceEnabled = addResistanceModifierEnabledProp.getBoolean();
@@ -71,9 +71,9 @@ public class AddResistanceModifier extends DifficultyModifier {
                 "ResistanceModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
         double selectionWeight = selectionWeightProp.getDouble();
         if(addResistanceEnabled && maxResistanceLevel>0 && diffCostPerLevelResistance>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new AddResistanceModifier(maxResistanceLevel, diffCostPerLevelResistance, selectionWeight));
+            return Lists.newArrayList(new AddResistanceModifier(maxResistanceLevel, diffCostPerLevelResistance, selectionWeight));
         }
 
-
-    }
+        return Lists.newArrayList();
+    };
 }

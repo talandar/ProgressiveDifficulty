@@ -3,7 +3,6 @@ package derpatiel.progressivediff.controls;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import derpatiel.progressivediff.DifficultyControl;
-import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.MultiplePlayerCombineType;
 import derpatiel.progressivediff.SpawnEventDetails;
 import derpatiel.progressivediff.util.LOG;
@@ -13,6 +12,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.AchievementList;
@@ -51,7 +51,8 @@ public class AchievementControl extends DifficultyControl {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config) {
+    public static Function<Configuration,List<DifficultyControl>> getFromConfig = config -> {
+        List<DifficultyControl> returns = Lists.newArrayList();
         Property playerAchievementsAffectDifficultyProp = config.get(IDENTIFIER,
                 "EnableAchievementsAffectDifficulty", true, "Difficulty is added based on achievements the player has.");
         boolean achievementsAddDifficulty = playerAchievementsAffectDifficultyProp.getBoolean();
@@ -59,45 +60,46 @@ public class AchievementControl extends DifficultyControl {
                 "AchievementValues", defaultAchievementValues, "List of achievments and the difficulty they add.");
         String[] achieveMap = achievementValueMapProp.getStringList();
         Property multiplePlayerComboTypeProp = config.get(IDENTIFIER,
-                "MultiplePlayerCombinationType",MultiplePlayerCombineType.AVERAGE.toString(),
-                "When there are multiple players within the spawn area (128 block radius), use this to decide what value to use.  Valid values: "+MultiplePlayerCombineType.getValidValuesString()+" defaults to AVERAGE.");
+                "MultiplePlayerCombinationType", MultiplePlayerCombineType.AVERAGE.toString(),
+                "When there are multiple players within the spawn area (128 block radius), use this to decide what value to use.  Valid values: " + MultiplePlayerCombineType.getValidValuesString() + " defaults to AVERAGE.");
         String comboTypeStr = multiplePlayerComboTypeProp.getString();
         MultiplePlayerCombineType type = MultiplePlayerCombineType.AVERAGE;
 
-        Map<Achievement,Integer> map = Maps.newHashMap();
-        Map<String,Integer> nameMap = Maps.newHashMap();
-        for(String line : achieveMap){
+        Map<Achievement, Integer> map = Maps.newHashMap();
+        Map<String, Integer> nameMap = Maps.newHashMap();
+        for (String line : achieveMap) {
             int index = line.lastIndexOf(":");
-            if(index<0){
-                LOG.error("invalid entry in AchievementValues key.  Requires strings of format \"achievementid:value\", found "+line);
+            if (index < 0) {
+                LOG.error("invalid entry in AchievementValues key.  Requires strings of format \"achievementid:value\", found " + line);
                 continue;
             }
-            String name = line.substring(0,index);
-            String valStr = line.substring(index+1);
+            String name = line.substring(0, index);
+            String valStr = line.substring(index + 1);
 
             int value = 0;
             try {
                 value = Integer.parseInt(valStr);
-            }catch(NumberFormatException nfe){
-                LOG.error("Invalid value format for achievement "+name+", requires integer, was "+valStr);
+            } catch (NumberFormatException nfe) {
+                LOG.error("Invalid value format for achievement " + name + ", requires integer, was " + valStr);
             }
-            nameMap.put(name,value);
+            nameMap.put(name, value);
         }
-        for(Achievement a : AchievementList.ACHIEVEMENTS){
-            if(nameMap.containsKey(a.statId)){
-                map.put(a,nameMap.get(a.statId));
+        for (Achievement a : AchievementList.ACHIEVEMENTS) {
+            if (nameMap.containsKey(a.statId)) {
+                map.put(a, nameMap.get(a.statId));
             }
         }
 
-        try{
+        try {
             type = MultiplePlayerCombineType.valueOf(comboTypeStr);
-        }catch(Exception e){
-            LOG.error("Invalid Multiple Player Combination type found for control with identifier "+IDENTIFIER+", found "+comboTypeStr+", using AVERAGE instead.");
+        } catch (Exception e) {
+            LOG.error("Invalid Multiple Player Combination type found for control with identifier " + IDENTIFIER + ", found " + comboTypeStr + ", using AVERAGE instead.");
         }
-        if (achievementsAddDifficulty && map.size() > 0){
-            DifficultyManager.addDifficultyControl(new AchievementControl(map,type));
+        if (achievementsAddDifficulty && map.size() > 0) {
+            returns.add(new AchievementControl(map, type));
         }
-    }
+        return returns;
+    };
 
 
     private static String[] generateDefaultAchievementValues(int value) {

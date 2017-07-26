@@ -1,16 +1,15 @@
 package derpatiel.progressivediff.modifiers;
 
-import derpatiel.progressivediff.DifficultyManager;
+import com.google.common.collect.Lists;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.DifficultyModifier;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
-import javax.swing.text.html.parser.Entity;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Jim on 4/30/2017.
@@ -63,7 +62,8 @@ public class CreeperChargeModifier extends DifficultyModifier {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config){
+    public static Function<Configuration,List<DifficultyModifier>> getFromConfig = config -> {
+        List<DifficultyModifier> returns = Lists.newArrayList();
         Property prechargeEnabledProp = config.get(IDENTIFIER,
                 "EnableCreeperPrecharge",true,"Enable the creeper precharge modifier.  This causes creepers to spawn charged, as if hit by lightning.");
         boolean prechargeEnabled = prechargeEnabledProp.getBoolean();
@@ -74,7 +74,8 @@ public class CreeperChargeModifier extends DifficultyModifier {
                 "DifficultyCost",40,"Cost of applying the charge to the creeper.");
         int diffCost = difficultyCostProp.getInt();
         if(prechargeEnabled && diffCost>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new CreeperChargeModifier(diffCost,selectionWeight));
+           returns.add(new CreeperChargeModifier(diffCost,selectionWeight));
         }
-    }
+        return returns;
+    };
 }

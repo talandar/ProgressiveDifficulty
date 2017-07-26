@@ -1,13 +1,10 @@
 package derpatiel.progressivediff;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.MobNBTHandler;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
-
 import java.util.List;
 import java.util.Map;
 
@@ -30,10 +27,13 @@ public class MobUpkeepController {
         List<EntityLiving> modifiedEntities = MobNBTHandler.getModifiedEntities(world);
 
         for(EntityLiving entity : modifiedEntities){
+            String regionName = MobNBTHandler.getEntityRegion(entity);
             Map<String,Integer> changes = MobNBTHandler.getChangeMap(entity);
+            Region region = DifficultyManager.getRegion(regionName);
+            String mobId = EntityList.getEntityString(entity);
             for(String change : changes.keySet()){
                 try {
-                    DifficultyModifier modifier = DifficultyManager.getModifierById(change);
+                    DifficultyModifier modifier = region.getModifierForMobById(mobId,change);
                     if (modifier != null) {
                         modifier.handleUpkeepEvent(changes.get(change), entity);
                     }

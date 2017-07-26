@@ -1,13 +1,16 @@
 package derpatiel.progressivediff.modifiers;
 
-import derpatiel.progressivediff.DifficultyManager;
+import com.google.common.collect.Lists;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.DifficultyModifier;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Jim on 4/30/2017.
@@ -53,7 +56,7 @@ public class AddHealthModifier extends DifficultyModifier {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config){
+    public static Function<Configuration, List<DifficultyModifier>> getFromConfig = config -> {
         Property addHealthModifierEnabledProp = config.get(IDENTIFIER,
                 "EnableAddHealthModifier",true,"Enable the add health modifier.  This adds health to mobs on spawn.");
         boolean addHealthModEnabled = addHealthModifierEnabledProp.getBoolean();
@@ -67,7 +70,8 @@ public class AddHealthModifier extends DifficultyModifier {
                 "DifficultyCostPerHealth",5,"Cost of each extra point of health.  Larger values will mean more difficult mobs will have less health, while smaller values will cause more difficult mobs to have lots of extra health.");
         int diffCostPerHealth = difficultyCostPerHealthProp.getInt();
         if(addHealthModEnabled && maxAddedHealth>0 && diffCostPerHealth>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new AddHealthModifier(maxAddedHealth,diffCostPerHealth,selectionWeight));
+            return Lists.newArrayList(new AddHealthModifier(maxAddedHealth,diffCostPerHealth,selectionWeight));
         }
-    }
+        return Lists.newArrayList();
+    };
 }

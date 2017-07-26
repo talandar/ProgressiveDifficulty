@@ -1,13 +1,16 @@
 package derpatiel.progressivediff.modifiers;
 
-import derpatiel.progressivediff.DifficultyManager;
+import com.google.common.collect.Lists;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.DifficultyModifier;
-import derpatiel.progressivediff.MobUpkeepController;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Jim on 4/30/2017.
@@ -60,7 +63,7 @@ public class AddRegenerationModifier extends DifficultyModifier {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config) {
+    public static Function<Configuration, List<DifficultyModifier>> getFromConfig = config -> {
         Property addRegenerationModifierEnabledProp = config.get(IDENTIFIER,
                 "EnableAddRegenerationModifier",true,"Enable the add regeneration modifier.  This adds the regeneration potion effect to mobs on spawn.");
         boolean addRegenerationEnabled = addRegenerationModifierEnabledProp.getBoolean();
@@ -75,9 +78,9 @@ public class AddRegenerationModifier extends DifficultyModifier {
                 "RegenerationModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
         double selectionWeight = selectionWeightProp.getDouble();
         if(addRegenerationEnabled && maxRegenLevel>0 && diffCostPerLevelRegen>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new AddRegenerationModifier(maxRegenLevel,diffCostPerLevelRegen,selectionWeight));
+            return Lists.newArrayList(new AddRegenerationModifier(maxRegenLevel,diffCostPerLevelRegen,selectionWeight));
         }
 
-
-    }
+        return Lists.newArrayList();
+    };
 }

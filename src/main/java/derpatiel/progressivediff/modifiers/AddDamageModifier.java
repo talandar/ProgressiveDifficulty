@@ -1,6 +1,7 @@
 package derpatiel.progressivediff.modifiers;
 
-import derpatiel.progressivediff.DifficultyManager;
+import com.google.common.collect.Lists;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.DifficultyModifier;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.IRangedAttackMob;
@@ -8,6 +9,9 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Jim on 4/30/2017.
@@ -20,7 +24,7 @@ public class AddDamageModifier extends DifficultyModifier {
     private int diffCostPerDamage;
     private double selectionWeight;
 
-    public AddDamageModifier(int maxExtraDamage, int diffCostPerDamage, double selectionWeight){
+    public AddDamageModifier(int maxExtraDamage, int diffCostPerDamage, double selectionWeight) {
         this.maxExtraDamage = maxExtraDamage;
         this.diffCostPerDamage = diffCostPerDamage;
         this.selectionWeight = selectionWeight;
@@ -59,23 +63,24 @@ public class AddDamageModifier extends DifficultyModifier {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config) {
+    public static Function<Configuration, List<DifficultyModifier>> getFromConfig = config -> {
+
         Property addStrengthModifierEnabledProp = config.get(IDENTIFIER,
-                "EnableAddDamageModifier",true,"Enable the add damage modifier.  This adds damage points (half-hearts) to the mobs damage.");
+                "EnableAddDamageModifier", true, "Enable the add damage modifier.  This adds damage points (half-hearts) to the mobs damage.");
         boolean addStrengthEnabled = addStrengthModifierEnabledProp.getBoolean();
         Property strengthLevelMaxLevelProp = config.get(IDENTIFIER,
-                "DamageModifierMaxLevel",5,"Maximum extra damage added to the mob when this is triggered.");
+                "DamageModifierMaxLevel", 5, "Maximum extra damage added to the mob when this is triggered.");
         int maxStrengthLevel = strengthLevelMaxLevelProp.getInt();
         Property difficultyCostPerStrengthLevelProp = config.get(IDENTIFIER,
-                "DifficultyCostPerDamage",6,"Cost of each damage point.");
+                "DifficultyCostPerDamage", 6, "Cost of each damage point.");
         int diffCostPerLevelStrength = difficultyCostPerStrengthLevelProp.getInt();
         Property selectionWeightProp = config.get(IDENTIFIER,
-                "DamageModifierWeight",1.0d,"Weight that affects how often this modifier is selected.");
+                "DamageModifierWeight", 1.0d, "Weight that affects how often this modifier is selected.");
         double selectionWeight = selectionWeightProp.getDouble();
-        if(addStrengthEnabled && maxStrengthLevel>0 && diffCostPerLevelStrength>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new AddDamageModifier(maxStrengthLevel,diffCostPerLevelStrength,selectionWeight));
+        if (addStrengthEnabled && maxStrengthLevel > 0 && diffCostPerLevelStrength > 0 && selectionWeight > 0) {
+            return Lists.newArrayList(new AddDamageModifier(maxStrengthLevel, diffCostPerLevelStrength, selectionWeight));
         }
+        return Lists.newArrayList();
+    };
 
-
-    }
 }

@@ -1,11 +1,14 @@
 package derpatiel.progressivediff.modifiers;
 
-import derpatiel.progressivediff.DifficultyManager;
+import com.google.common.collect.Lists;
+import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.DifficultyModifier;
-import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Jim on 4/30/2017.
@@ -48,7 +51,8 @@ public class FieryModifier extends DifficultyModifier {
         return IDENTIFIER;
     }
 
-    public static void readConfig(Configuration config){
+    public static Function<Configuration,List<DifficultyModifier>> getFromConfig = config -> {
+        List<DifficultyModifier> returns = Lists.newArrayList();
         Property modifierEnabledProp = config.get(IDENTIFIER,
                 "EnableFireAspectModifier",true,"Enable the fire aspect modifier.  This allows mobs to do damage that ignites the player.");
         boolean modifierEnabled = modifierEnabledProp.getBoolean();
@@ -59,7 +63,8 @@ public class FieryModifier extends DifficultyModifier {
                 "DifficultyCost",5,"Cost of the modifier.");
         int costForFireAspect = difficultyCostProp.getInt();
         if(modifierEnabled && costForFireAspect>0 && selectionWeight>0) {
-            DifficultyManager.addDifficultyModifier(new FieryModifier(costForFireAspect,selectionWeight));
+            returns.add(new FieryModifier(costForFireAspect,selectionWeight));
         }
-    }
+        return returns;
+    };
 }
