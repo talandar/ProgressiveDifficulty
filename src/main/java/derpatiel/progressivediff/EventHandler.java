@@ -1,5 +1,6 @@
 package derpatiel.progressivediff;
 
+import derpatiel.progressivediff.api.DifficultyModifier;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.Entity;

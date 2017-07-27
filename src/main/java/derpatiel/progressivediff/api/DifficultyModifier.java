@@ -1,4 +1,4 @@
-package derpatiel.progressivediff;
+package derpatiel.progressivediff.api;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;

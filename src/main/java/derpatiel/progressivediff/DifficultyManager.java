@@ -1,12 +1,14 @@
 package derpatiel.progressivediff;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import derpatiel.progressivediff.api.DifficultyControl;
+import derpatiel.progressivediff.api.DifficultyModifier;
 import derpatiel.progressivediff.controls.*;
 import derpatiel.progressivediff.modifiers.*;
 import derpatiel.progressivediff.util.LOG;
+import net.minecraft.command.CommandTitle;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,11 +17,8 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import net.minecraftforge.fml.common.registry.EntityEntry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
@@ -64,6 +63,8 @@ public class DifficultyManager {
             "Parrot",
             "Villager"
     };
+
+    //TODO some kind of conversion/upgrade script for 1.x configs to 2.x configs
 
     public static void registerModifier(Function<Configuration, List<DifficultyModifier>> constructor) {
         modifierConstructors.add(constructor);

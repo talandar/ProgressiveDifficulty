@@ -2,6 +2,7 @@ package derpatiel.progressivediff.controls;
 
 import com.google.common.collect.Lists;
 import derpatiel.progressivediff.*;
+import derpatiel.progressivediff.api.DifficultyControl;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.PlayerAreaStatAccumulator;
 import net.minecraft.entity.EntityList;

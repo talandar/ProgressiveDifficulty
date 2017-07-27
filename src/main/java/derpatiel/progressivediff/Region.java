@@ -2,18 +2,18 @@ package derpatiel.progressivediff;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import derpatiel.progressivediff.api.DifficultyControl;
+import derpatiel.progressivediff.api.DifficultyModifier;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import org.apache.commons.lang3.builder.Diff;
 
 import java.io.File;
 import java.math.BigInteger;

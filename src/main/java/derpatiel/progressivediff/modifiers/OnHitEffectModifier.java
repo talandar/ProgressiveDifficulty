@@ -1,7 +1,7 @@
 package derpatiel.progressivediff.modifiers;
 
 import com.google.common.collect.Lists;
-import derpatiel.progressivediff.DifficultyModifier;
+import derpatiel.progressivediff.api.DifficultyModifier;
 import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;

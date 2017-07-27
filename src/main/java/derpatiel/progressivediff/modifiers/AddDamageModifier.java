@@ -2,7 +2,7 @@ package derpatiel.progressivediff.modifiers;
 
 import com.google.common.collect.Lists;
 import derpatiel.progressivediff.OldManager;
-import derpatiel.progressivediff.DifficultyModifier;
+import derpatiel.progressivediff.api.DifficultyModifier;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
