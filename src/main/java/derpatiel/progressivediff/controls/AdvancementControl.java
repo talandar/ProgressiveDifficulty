@@ -2,7 +2,7 @@ package derpatiel.progressivediff.controls;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import derpatiel.progressivediff.DifficultyControl;
+import derpatiel.progressivediff.api.DifficultyControl;
 import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.MultiplePlayerCombineType;
 import derpatiel.progressivediff.SpawnEventDetails;
