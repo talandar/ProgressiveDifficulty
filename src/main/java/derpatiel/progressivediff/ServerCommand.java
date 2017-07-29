@@ -61,7 +61,7 @@ public class ServerCommand extends CommandBase {
             sendChat(sender, new String[]{"Killing all mobs in this dimension."});
             sender.getEntityWorld().getEntities(EntityLiving.class, (entity) -> !entity.isDead).stream().forEach(mob -> mob.setDead());
         }else if(args[0].equalsIgnoreCase("region")) {
-            Region currentRegion = DifficultyManager.getRegionForPosition(sender.getPosition());
+            Region currentRegion = DifficultyManager.getRegionForPosition(sender.getEntityWorld().provider.getDimension(),sender.getPosition());
             sendChat(sender, new String[]{"Currently in region "+currentRegion.getName()});
         }else if(args[0].equalsIgnoreCase("advancements")){
             File configDir = DifficultyManager.getConfigDir();

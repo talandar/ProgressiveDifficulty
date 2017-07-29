@@ -34,6 +34,8 @@ public class Region implements Comparable<Region>{
     private int minZ;//-30000000
     private int maxZ;// 30000000
 
+    private int dimensionId;
+
     private int baseDifficulty;
     private int allowedMargin;
     private int maxFailCount;
@@ -164,6 +166,8 @@ public class Region implements Comparable<Region>{
                 maxX = 30000000;
                 maxZ = 30000000;
                 maxY = 256;
+
+                dimensionId=0;
             }else{
                 Property minXBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL, "minXBoundary", -30000000, "minimum x for bounding box of this region.");
                 minX = minXBoundaryProp.getInt();
@@ -179,6 +183,9 @@ public class Region implements Comparable<Region>{
                 minZ = minZBoundaryProp.getInt();
                 Property maxZBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL, "maxZBoundary", 30000000, "maximum z for bounding box of this region.");
                 maxZ = maxZBoundaryProp.getInt();
+
+                Property dimensionIdProp = regionConfig.get(Configuration.CATEGORY_GENERAL, "dimesionId",1,"What dimension this region exists in.");
+                dimensionId = dimensionIdProp.getInt();
             }
 
         }finally {
@@ -271,6 +278,10 @@ public class Region implements Comparable<Region>{
         if(thisSpawnModifiers.size()>0) {
             MobNBTHandler.setChangeMap(entity,getName(),thisSpawnModifiers);
         }
+    }
+
+    public int getDimensionId(){
+        return dimensionId;
     }
 
 

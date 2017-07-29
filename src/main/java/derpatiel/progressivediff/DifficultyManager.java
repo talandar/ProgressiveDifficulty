@@ -13,7 +13,11 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -35,8 +39,9 @@ public class DifficultyManager {
 
     private static final Map<Integer,Map<EntityLiving,SpawnEventDetails>> eventsThisTickByDimension = Maps.newHashMap();
 
-    private static final TreeSet<Region> regions = new TreeSet<>();
+    private static final Map<Integer,TreeSet<Region>> regionsByDim = Maps.newHashMap();
     private static final Map<String,Region> regionsByName = Maps.newHashMap();
+    private static Region defaultRegion;
 
     //general configs
     public static boolean enabled;
@@ -102,7 +107,7 @@ public class DifficultyManager {
     }
 
     public static void syncConfig() {
-        regions.clear();
+        regionsByDim.clear();
         regionsByName.clear();
         if(!rootProgDiffConfigDir.exists()){
             rootProgDiffConfigDir.mkdirs();
@@ -159,13 +164,11 @@ public class DifficultyManager {
         for(String regionName : regionNames){
             Region region = new Region(regionName);
             region.readConfig();
-            regions.add(region);
+            int dimId = region.getDimensionId();
+            regionsByDim.computeIfAbsent(dimId, key -> new TreeSet<Region>()).add(region);
             regionsByName.put(regionName,region);
         }
-        LOG.info("read "+regions.size()+" regions. They were (in increasing size):");
-        for(Region r : regions){
-            LOG.info(r.getName()+" with volume "+r.getVolume());
-        }
+        defaultRegion = regionsByName.get("default");
     }
 
     public static void onCheckSpawnEvent(LivingSpawnEvent.CheckSpawn checkSpawnEvent) {
@@ -229,7 +232,8 @@ public class DifficultyManager {
         SpawnEventDetails details = eventsThisTickByDimension.computeIfAbsent(joinWorldEvent.getEntity().world.provider.getDimension(), thing -> new HashMap<>()).get(mobToSpawn);
         if (details != null) {
             //find region
-            Region homeRegion = getRegionForPosition(joinWorldEvent.getEntity().getPosition());
+            int dimension = joinWorldEvent.getWorld().provider.getDimension();
+            Region homeRegion = getRegionForPosition(dimension,joinWorldEvent.getEntity().getPosition());
             int difficulty = homeRegion.determineDifficultyForSpawnEvent(details);
             if(difficulty<0 && homeRegion.doesNegativeDifficultyPreventSpawn()){
                 int chance = joinWorldEvent.getWorld().rand.nextInt(100);
@@ -244,16 +248,21 @@ public class DifficultyManager {
         }
     }
 
-    public static Region getRegionForPosition(BlockPos pos){
-        LOG.info("find region for spawn:");
-        for(Region region : regions) {
-            LOG.info("\tcheck if in " + region.getName());
-            if (region.isPosInRegion(pos)) {
-                LOG.info("\tIS in region " + region.getName());
-                return region;
+    public static Region getRegionForPosition(int dimension, BlockPos pos){
+        LOG.info("find region for spawn in dimension "+dimension+", at position "+pos.toString());
+        TreeSet<Region> regionsInDim = regionsByDim.get(dimension);
+        if(regionsInDim==null || regionsInDim.isEmpty()){
+            return defaultRegion;
+        }else {
+            for (Region region : regionsInDim) {
+                LOG.info("\tcheck if in " + region.getName());
+                if (region.isPosInRegion(pos)) {
+                    LOG.info("\tIS in region " + region.getName());
+                    return region;
+                }
             }
         }
-        return null;
+        return defaultRegion;
     }
 
     public static Region getRegionByName(String regionName) {
