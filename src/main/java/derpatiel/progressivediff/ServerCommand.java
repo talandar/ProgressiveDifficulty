@@ -34,9 +34,7 @@ public class ServerCommand extends CommandBase {
             "    same dimension as the player",
             "\"progdiff killmobs\" kill all mobs in the ",
             "    same dimension as the player",
-            "\"progdiff advancements\" print a list of all loaded",
-            "    advancements to the configuration directory as",
-            "    progdiff_advancements.txt",
+            "\"progdiff region\" print the region the player is currently in"
     };
 
     @Override
@@ -46,7 +44,7 @@ public class ServerCommand extends CommandBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "\"progdiff [sync|killmodified|killmobs]\"";
+        return "\"progdiff [sync|killmodified|killmobs|region]\"";
     }
 
     @Override
@@ -62,6 +60,9 @@ public class ServerCommand extends CommandBase {
         }else if(args[0].equalsIgnoreCase("killmobs")) {
             sendChat(sender, new String[]{"Killing all mobs in this dimension."});
             sender.getEntityWorld().getEntities(EntityLiving.class, (entity) -> !entity.isDead).stream().forEach(mob -> mob.setDead());
+        }else if(args[0].equalsIgnoreCase("region")) {
+            Region currentRegion = DifficultyManager.getRegionForPosition(sender.getPosition());
+            sendChat(sender, new String[]{"Currently in region "+currentRegion.getName()});
         }else{
             sendChat(sender,usage);
         }
@@ -82,7 +83,8 @@ public class ServerCommand extends CommandBase {
             String[] validCompletions = new String[]{
                     "sync",
                     "killmodified",
-                    "killmobs"
+                    "killmobs",
+                    "region"
             };
             return CommandBase.getListOfStringsMatchingLastWord(args, validCompletions);
         }

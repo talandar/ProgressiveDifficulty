@@ -13,6 +13,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -228,16 +229,7 @@ public class DifficultyManager {
         SpawnEventDetails details = eventsThisTickByDimension.computeIfAbsent(joinWorldEvent.getEntity().world.provider.getDimension(), thing -> new HashMap<>()).get(mobToSpawn);
         if (details != null) {
             //find region
-            Region homeRegion = null;
-            LOG.info("find region for spawn:");
-            for(Region region : regions) {
-                LOG.info("\tcheck if in " + region.getName());
-                if (region.isPosInRegion(joinWorldEvent.getEntity().getPosition())) {
-                    LOG.info("\tIS in region " + region.getName());
-                    homeRegion = region;
-                    break;
-                }
-            }
+            Region homeRegion = getRegionForPosition(joinWorldEvent.getEntity().getPosition());
             int difficulty = homeRegion.determineDifficultyForSpawnEvent(details);
             if(difficulty<0 && homeRegion.doesNegativeDifficultyPreventSpawn()){
                 int chance = joinWorldEvent.getWorld().rand.nextInt(100);
@@ -252,7 +244,19 @@ public class DifficultyManager {
         }
     }
 
-    public static Region getRegion(String regionName) {
+    public static Region getRegionForPosition(BlockPos pos){
+        LOG.info("find region for spawn:");
+        for(Region region : regions) {
+            LOG.info("\tcheck if in " + region.getName());
+            if (region.isPosInRegion(pos)) {
+                LOG.info("\tIS in region " + region.getName());
+                return region;
+            }
+        }
+        return null;
+    }
+
+    public static Region getRegionByName(String regionName) {
         return regionsByName.getOrDefault(regionName,regionsByName.get("default"));
     }
 }
