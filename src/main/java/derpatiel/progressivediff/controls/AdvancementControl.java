@@ -20,7 +20,7 @@ import java.util.function.Function;
 
 public class AdvancementControl extends DifficultyControl {
 
-    private static final String IDENTIFIER = "CONTROL_ACHIEVEMENTS";
+    private static final String IDENTIFIER = "CONTROL_ADVANCEMENTS";
 
     private Map<String,Integer> addedDifficultyAchievementMap;
     private MultiplePlayerCombineType type;
@@ -33,11 +33,11 @@ public class AdvancementControl extends DifficultyControl {
 
     @Override
     public int getChangeForSpawn(SpawnEventDetails details) {
-        int decidedPoints = PlayerAreaStatAccumulator.getStatForPlayersInArea(type,details.entity,128,(player)->getAchievementPointsForPlayer(player));
+        int decidedPoints = PlayerAreaStatAccumulator.getStatForPlayersInArea(type,details.entity,128,(player)->getAdvancementPointsForPlayer(player));
         return decidedPoints;
     }
 
-    private int getAchievementPointsForPlayer(EntityPlayerMP player) {
+    private int getAdvancementPointsForPlayer(EntityPlayerMP player) {
         int sum=0;
         PlayerAdvancements playerProgress = player.getAdvancements();
         AdvancementManager advancementManager = player.getServerWorld().getAdvancementManager();
@@ -58,10 +58,10 @@ public class AdvancementControl extends DifficultyControl {
     public static Function<Configuration,List<DifficultyControl>> getFromConfig = config -> {
         List<DifficultyControl> returns = Lists.newArrayList();
         Property playerAchievementsAffectDifficultyProp = config.get(IDENTIFIER,
-                "EnableAchievementsAffectDifficulty", true, "Difficulty is added based on achievements the player has.");
+                "EnableAdvancementsAffectDifficulty", true, "Difficulty is added based on advancements the player has.");
         boolean achievementsAddDifficulty = playerAchievementsAffectDifficultyProp.getBoolean();
         Property achievementValueMapProp = config.get(IDENTIFIER,
-                "AchievementValues", new String[]{}, "List of achievments and the difficulty they add.");
+                "AdvancementValues", new String[]{}, "List of advancements and the difficulty they add.");
         String[] achieveMap = achievementValueMapProp.getStringList();
         Property multiplePlayerComboTypeProp = config.get(IDENTIFIER,
                 "MultiplePlayerCombinationType",MultiplePlayerCombineType.AVERAGE.toString(),
@@ -73,7 +73,7 @@ public class AdvancementControl extends DifficultyControl {
         for(String line : achieveMap){
             int index = line.lastIndexOf(":");
             if(index<0){
-                LOG.error("invalid entry in AchievementValues key.  Requires strings of format \"achievementid:value\", found "+line);
+                LOG.error("invalid entry in AdvancementValues key.  Requires strings of format \"advancementid:value\", found "+line);
                 continue;
             }
             String name = line.substring(0,index);
@@ -83,7 +83,7 @@ public class AdvancementControl extends DifficultyControl {
             try {
                 value = Integer.parseInt(valStr);
             }catch(NumberFormatException nfe){
-                LOG.error("Invalid value format for achievement "+name+", requires integer, was "+valStr);
+                LOG.error("Invalid value format for advancement "+name+", requires integer, was "+valStr);
             }
             nameMap.put(name,value);
         }
