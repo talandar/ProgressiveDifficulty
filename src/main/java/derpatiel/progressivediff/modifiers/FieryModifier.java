@@ -1,7 +1,6 @@
 package derpatiel.progressivediff.modifiers;
 
 import com.google.common.collect.Lists;
-import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.api.DifficultyModifier;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;

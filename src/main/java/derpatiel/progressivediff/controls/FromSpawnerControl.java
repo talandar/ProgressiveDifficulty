@@ -2,7 +2,6 @@ package derpatiel.progressivediff.controls;
 
 import com.google.common.collect.Lists;
 import derpatiel.progressivediff.api.DifficultyControl;
-import derpatiel.progressivediff.OldManager;
 import derpatiel.progressivediff.SpawnEventDetails;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
