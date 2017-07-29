@@ -184,7 +184,7 @@ public class Region implements Comparable<Region>{
                 Property maxZBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL, "maxZBoundary", 30000000, "maximum z for bounding box of this region.");
                 maxZ = maxZBoundaryProp.getInt();
 
-                Property dimensionIdProp = regionConfig.get(Configuration.CATEGORY_GENERAL, "dimesionId",1,"What dimension this region exists in.");
+                Property dimensionIdProp = regionConfig.get(Configuration.CATEGORY_GENERAL, "dimesionId",0,"What dimension this region exists in.");
                 dimensionId = dimensionIdProp.getInt();
             }
 
