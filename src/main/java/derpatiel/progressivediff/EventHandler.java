@@ -49,7 +49,7 @@ public class EventHandler {
                 && MobNBTHandler.isModifiedMob((EntityLiving)causeMob)){
             Map<String,Integer> changes = MobNBTHandler.getChangeMap((EntityLiving)causeMob);
             String regionName = MobNBTHandler.getEntityRegion((EntityLiving)causeMob);
-            Region mobRegion = DifficultyManager.getRegion(regionName);
+            Region mobRegion = DifficultyManager.getRegionByName(regionName);
             String mobId = EntityList.getEntityString(causeMob);
             for(String change : changes.keySet()){
                 try {

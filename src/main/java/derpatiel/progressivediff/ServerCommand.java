@@ -33,7 +33,8 @@ public class ServerCommand extends CommandBase {
             "\"progdiff advancements\" print a list of all loaded",
             "    advancements to the configuration directory as",
             "    progdiff_advancements.txt",
-            "    (filters out advancements under minecraft:recipes/*)"
+            "    (filters out advancements under minecraft:recipes/*)",
+            "\"progdiff region\" print the region the player is currently in"
     };
 
     @Override
@@ -43,7 +44,7 @@ public class ServerCommand extends CommandBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "\"progdiff [sync|killmodified|killmobs|advancements]\"";
+        return "\"progdiff [sync|killmodified|killmobs|advancements|region]\"";
     }
 
     @Override
@@ -59,6 +60,9 @@ public class ServerCommand extends CommandBase {
         }else if(args[0].equalsIgnoreCase("killmobs")) {
             sendChat(sender, new String[]{"Killing all mobs in this dimension."});
             sender.getEntityWorld().getEntities(EntityLiving.class, (entity) -> !entity.isDead).stream().forEach(mob -> mob.setDead());
+        }else if(args[0].equalsIgnoreCase("region")) {
+            Region currentRegion = DifficultyManager.getRegionForPosition(sender.getPosition());
+            sendChat(sender, new String[]{"Currently in region "+currentRegion.getName()});
         }else if(args[0].equalsIgnoreCase("advancements")){
             File configDir = DifficultyManager.getConfigDir();
             File advancementsFile = new File(configDir,"progdiff_advancements.txt");
@@ -107,7 +111,8 @@ public class ServerCommand extends CommandBase {
                     "sync",
                     "killmodified",
                     "advancements",
-                    "killmobs"
+                    "killmobs",
+                    "region"
             };
             return CommandBase.getListOfStringsMatchingLastWord(args, validCompletions);
         }

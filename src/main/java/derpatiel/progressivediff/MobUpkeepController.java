@@ -30,7 +30,7 @@ public class MobUpkeepController {
         for(EntityLiving entity : modifiedEntities){
             String regionName = MobNBTHandler.getEntityRegion(entity);
             Map<String,Integer> changes = MobNBTHandler.getChangeMap(entity);
-            Region region = DifficultyManager.getRegion(regionName);
+            Region region = DifficultyManager.getRegionByName(regionName);
             String mobId = EntityList.getEntityString(entity);
             for(String change : changes.keySet()){
                 try {

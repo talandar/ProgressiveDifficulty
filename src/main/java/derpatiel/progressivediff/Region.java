@@ -156,20 +156,30 @@ public class Region implements Comparable<Region>{
                 mobSpawnCosts.put(entry,0);
             });
 
-            Property minXBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL,"minXBoundary",-30000000,"minimum x for bounding box of this region.");
-            minX = minXBoundaryProp.getInt();
-            Property maxXBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL,"maxXBoundary",30000000,"maximum x for bounding box of this region.");
-            maxX = maxXBoundaryProp.getInt();
+            if(name.equals("default")) {
+                minX = -30000000;
+                minZ = -30000000;
+                minY = 0;
 
-            Property minYBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL,"minYBoundary",0,"minimum y for bounding box of this region.");
-            minY = minYBoundaryProp.getInt();
-            Property maxYBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL,"maxYBoundary",256,"maximum y for bounding box of this region.");
-            maxY = maxYBoundaryProp.getInt();
+                maxX = 30000000;
+                maxZ = 30000000;
+                maxY = 256;
+            }else{
+                Property minXBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL, "minXBoundary", -30000000, "minimum x for bounding box of this region.");
+                minX = minXBoundaryProp.getInt();
+                Property maxXBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL, "maxXBoundary", 30000000, "maximum x for bounding box of this region.");
+                maxX = maxXBoundaryProp.getInt();
 
-            Property minZBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL,"minZBoundary",-30000000,"minimum z for bounding box of this region.");
-            minZ = minZBoundaryProp.getInt();
-            Property maxZBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL,"maxZBoundary",30000000,"maximum z for bounding box of this region.");
-            maxZ = maxZBoundaryProp.getInt();
+                Property minYBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL, "minYBoundary", 0, "minimum y for bounding box of this region.");
+                minY = minYBoundaryProp.getInt();
+                Property maxYBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL, "maxYBoundary", 256, "maximum y for bounding box of this region.");
+                maxY = maxYBoundaryProp.getInt();
+
+                Property minZBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL, "minZBoundary", -30000000, "minimum z for bounding box of this region.");
+                minZ = minZBoundaryProp.getInt();
+                Property maxZBoundaryProp = regionConfig.get(Configuration.CATEGORY_GENERAL, "maxZBoundary", 30000000, "maximum z for bounding box of this region.");
+                maxZ = maxZBoundaryProp.getInt();
+            }
 
         }finally {
             if(regionConfig.hasChanged()){
