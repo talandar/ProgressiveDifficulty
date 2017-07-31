@@ -1,9 +1,11 @@
 package derpatiel.progressivediff.controls;
 
-import derpatiel.progressivediff.DifficultyControl;
+
+import com.google.common.collect.Lists;
 import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.MultiplePlayerCombineType;
 import derpatiel.progressivediff.SpawnEventDetails;
+import derpatiel.progressivediff.api.DifficultyControl;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.PlayerAreaStatAccumulator;
 import hardcorequesting.reputation.Reputation;
@@ -11,6 +13,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
 import java.util.List;
+import java.util.function.Function;
 
 
 public class HQMController extends DifficultyControl {
@@ -43,7 +46,8 @@ public class HQMController extends DifficultyControl {
         return IDENTIFIER;
     }
 
-    public static void loadConfig(Configuration config){
+    public static Function<Configuration,List<DifficultyControl>> getFromConfig = config -> {
+        List<DifficultyControl> returns = Lists.newArrayList();
         Property enableHQMRepControllerProp = config.get(IDENTIFIER,
                 "EnableHQMRepController", true, "Difficulty is added based on a reputation in HQM.");
         boolean enableModifier = enableHQMRepControllerProp.getBoolean();
@@ -61,8 +65,8 @@ public class HQMController extends DifficultyControl {
             LOG.error("Invalid Multiple Player Combination type found for control with identifier "+IDENTIFIER+", found "+comboTypeStr+", using AVERAGE instead.");
         }
         if (enableModifier && repName.length() > 0){
-            DifficultyManager.addDifficultyControl(new HQMController(type,repName));
+            returns.add(new HQMController(type,repName));
         }
-
-    }
+        return returns;
+    };
 }

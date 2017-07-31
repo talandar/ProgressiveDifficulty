@@ -22,6 +22,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.fml.common.Loader;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -194,7 +195,7 @@ public class DifficultyManager {
         registerControl(AdditionalPlayersControl.getFromConfig);
         registerControl(PlayerTimeInWorldControl.getFromConfig);
         registerControl(DistanceFromSpawnControl.getFromConfig);
-        registerControl(AdvancementControl.getFromConfig);
+        registerControl(AchievementControl.getFromConfig);
         registerControl(AllMobsKilledControl.getFromConfig);
         registerControl(SpecificMobKilledControl.getFromConfig);
         registerControl(BlocksBrokenControl.getFromConfig);
@@ -214,6 +215,8 @@ public class DifficultyManager {
         registerModifier(WeakGazeModifier.getFromConfig);
         registerModifier(FatigueGazeModifier.getFromConfig);
         registerModifier(OnHitEffectModifier.getFromConfig);
+
+        registerModInteractionModules();
     }
 
     public static boolean shouldModifyEntity(EntityLivingBase entity){
@@ -267,6 +270,12 @@ public class DifficultyManager {
 
     public static Region getRegionByName(String regionName) {
         return regionsByName.getOrDefault(regionName,regionsByName.get("default"));
+    }
+
+    private static void registerModInteractionModules(){
+        if(Loader.isModLoaded("hardcorequesting")){
+            registerControl(HQMController.getFromConfig);
+        }
     }
 }
 
