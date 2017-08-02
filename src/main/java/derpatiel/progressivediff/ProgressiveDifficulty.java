@@ -15,9 +15,8 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 @Mod(
         modid = ProgressiveDifficulty.MODID,
         version = ProgressiveDifficulty.VERSION,
-        acceptableRemoteVersions = "*",
         acceptedMinecraftVersions = "[1.11.2,1.12)",
-        dependencies = "required-after:forge@[13.20.1.2393,);"
+        dependencies = "required-after:forge@[13.20.1.2414,);"
 )
 public class ProgressiveDifficulty
 {

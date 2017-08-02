@@ -8,16 +8,11 @@ import derpatiel.progressivediff.api.DifficultyModifier;
 import derpatiel.progressivediff.controls.*;
 import derpatiel.progressivediff.modifiers.*;
 import derpatiel.progressivediff.util.LOG;
-import net.minecraft.command.CommandTitle;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -274,7 +269,12 @@ public class DifficultyManager {
 
     private static void registerModInteractionModules(){
         if(Loader.isModLoaded("hardcorequesting")){
+            LOG.info("Hardcore Questing Mod found.  Enabling Integration Module.");
             registerControl(HQMController.getFromConfig);
+        }
+        if(Loader.isModLoaded("betterquesting")){
+            LOG.info("Better Questing Mod found.  Enabling Integration Module.");
+            registerControl(BetterQuestingController.getFromConfig);
         }
     }
 }
