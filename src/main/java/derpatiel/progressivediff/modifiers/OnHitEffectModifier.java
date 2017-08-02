@@ -112,7 +112,7 @@ public class OnHitEffectModifier extends DifficultyModifier {
         //BLINDNESS;
         String ID_BLIND = "MOD_BLIND_ON_HIT";
         modifierEnabledProp = config.get(ID_BLIND,
-                "EnableFatigueOnHitModifier",true,"Enable the blindness on hit modifier.  Adds the potion effect to targets hit by a mob with this modifier.");
+                "EnableBlindOnHitModifier",true,"Enable the blindness on hit modifier.  Adds the potion effect to targets hit by a mob with this modifier.");
         modifierEnabled = modifierEnabledProp.getBoolean();
         difficultyCostPerLevelProp = config.get(ID_BLIND,
                 "DifficultyCostPerLevel",10,"Cost of each level of the effect applied to the target player.");
