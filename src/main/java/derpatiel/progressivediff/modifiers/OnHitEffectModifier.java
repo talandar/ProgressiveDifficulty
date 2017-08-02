@@ -170,7 +170,7 @@ public class OnHitEffectModifier extends DifficultyModifier {
         //POISON;
         String ID_POISON = "MOD_POISON_ON_HIT";
         modifierEnabledProp = config.get(ID_POISON,
-                "EnableWeaknessOnHitModifier",true,"Enable the poison on hit modifier.  Adds the potion effect to targets hit by a mob with this modifier.");
+                "EnablePoisonOnHitModifier",true,"Enable the poison on hit modifier.  Adds the potion effect to targets hit by a mob with this modifier.");
         modifierEnabled = modifierEnabledProp.getBoolean();
         MaxLevelProp = config.get(ID_POISON,
                 "ModifierMaxLevel",3,"Maximum level of this effect added to the target player when this is triggered.");
