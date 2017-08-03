@@ -253,9 +253,7 @@ public class DifficultyManager {
             return defaultRegion;
         }else {
             for (Region region : regionsInDim) {
-                LOG.info("\tcheck if in " + region.getName());
                 if (region.isPosInRegion(pos)) {
-                    LOG.info("\tIS in region " + region.getName());
                     return region;
                 }
             }
