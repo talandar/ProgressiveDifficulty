@@ -1,16 +1,24 @@
 package derpatiel.progressivediff;
 
 import derpatiel.progressivediff.api.DifficultyModifier;
+import derpatiel.progressivediff.util.ChatUtil;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.MobNBTHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.Map;
@@ -38,6 +46,24 @@ public class EventHandler {
         //this lets us skip things like fallingsand entities, arrows, fx, etc
         if(joinWorldEvent.getEntity() instanceof EntityLiving) {
             DifficultyManager.onJoinWorldEvent(joinWorldEvent);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event){
+        if(ProgressiveDifficulty.oldConfigExists){
+            TextComponentString linkComponent = new TextComponentString("[Progressive Difficulty Wiki]");
+            ITextComponent[] chats = new ITextComponent[]{
+                    new TextComponentString("[ProgressiveDifficulty] It looks like you have a version 1.0 " +
+                            "config file. Please check out the Progressive Difficulty Wiki for instructions on how" +
+                            " to migrate to a version 2.0 config file."),
+                    linkComponent
+            };
+            ClickEvent goLinkEvent = new ClickEvent(ClickEvent.Action.OPEN_URL,"https://github.com/talandar/ProgressiveDifficulty/wiki/2.0-Transition");
+            linkComponent.getStyle().setClickEvent(goLinkEvent);
+            linkComponent.getStyle().setColor(TextFormatting.BLUE);
+            linkComponent.getStyle().setUnderlined(true);
+            ChatUtil.sendChat(event.player,chats);
         }
     }
 
