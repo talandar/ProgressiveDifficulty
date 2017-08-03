@@ -23,6 +23,8 @@ public class ProgressiveDifficulty
     public static final String MODID = "progressivedifficulty";
     public static final String VERSION = "1.11_2.0";
 
+    public static boolean oldConfigExists = false;
+
     @Mod.Instance(MODID)
     public static ProgressiveDifficulty instance;
 

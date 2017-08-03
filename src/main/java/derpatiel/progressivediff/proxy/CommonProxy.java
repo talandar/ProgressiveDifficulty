@@ -3,6 +3,7 @@ package derpatiel.progressivediff.proxy;
 
 import derpatiel.progressivediff.DifficultyManager;
 import derpatiel.progressivediff.EventHandler;
+import derpatiel.progressivediff.ProgressiveDifficulty;
 import derpatiel.progressivediff.network.PacketHandler;
 import derpatiel.progressivediff.util.LOG;
 import net.minecraftforge.common.MinecraftForge;
@@ -14,6 +15,7 @@ public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         LOG.info("preInit COMMON");
         DifficultyManager.setBaseConfigDir(event.getModConfigurationDirectory());
+        ProgressiveDifficulty.oldConfigExists=event.getSuggestedConfigurationFile().exists();
     }
 
     public void init(FMLInitializationEvent event) {
