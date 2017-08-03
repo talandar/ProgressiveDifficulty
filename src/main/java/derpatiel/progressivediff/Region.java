@@ -267,7 +267,7 @@ public class Region implements Comparable<Region>{
         }
 
         String log = "For spawn of " + EntityList.getEntityString(entity)
-                + " in region "+ MobNBTHandler.getEntityRegion(entity)
+                + " in region "+ getName()
                 + " with difficulty " + initialDifficulty + ", ("+determinedDifficulty+" remaining) decided to use: ";
         for (String modId : thisSpawnModifiers.keySet()) {
             int numToApply = thisSpawnModifiers.get(modId);
