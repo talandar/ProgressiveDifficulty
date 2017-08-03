@@ -249,7 +249,6 @@ public class DifficultyManager {
     }
 
     public static Region getRegionForPosition(int dimension, BlockPos pos){
-        LOG.info("find region for spawn in dimension "+dimension+", at position "+pos.toString());
         TreeSet<Region> regionsInDim = regionsByDim.get(dimension);
         if(regionsInDim==null || regionsInDim.isEmpty()){
             return defaultRegion;
