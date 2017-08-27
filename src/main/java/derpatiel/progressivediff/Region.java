@@ -64,7 +64,7 @@ public class Region implements Comparable<Region>{
     }
 
 
-    public RegionMobConfig getConfigForMob(String mobId){
+    private RegionMobConfig getConfigForMob(String mobId){
         return byMobConfig.getOrDefault(mobId,defaultConfig);
     }
 
@@ -238,6 +238,18 @@ public class Region implements Comparable<Region>{
             difficulty+=control.getChangeForSpawn(details);
         }
         return difficulty;
+    }
+
+    public Map<String, Integer> determineDifficultyForFakedSpawnEvent(SpawnEventDetails spawnDetails){
+        Map<String,Integer> details = Maps.newHashMap();
+        details.put("MOB_BASE",getMobBaseSpawnCost(spawnDetails.entity));
+        details.put("REGION_BASE",baseDifficulty);
+        String mobId = EntityList.getEntityString(spawnDetails.entity);
+        RegionMobConfig mobConfig = getConfigForMob(mobId);
+        for(DifficultyControl control : mobConfig.controls){
+            details.put(control.getIdentifier(),control.getChangeForSpawn(spawnDetails));
+        }
+        return details;
     }
 
 
