@@ -57,7 +57,6 @@ public class PotionCloudModifier extends DifficultyModifier {
     public void handleUpkeepEvent(int numInstances, EntityLiving entity) {
         //called every half-second (MobUpkeepController.UPKEEP_INTERVAL)
         spawnLingeringCloud(numInstances, entity);
-        //TODO: block mobs from taking damage from this if they spawned it :/
     }
 
 
@@ -87,16 +86,42 @@ public class PotionCloudModifier extends DifficultyModifier {
                 returns,
                 config);
 
-        Potion[] effects = new Potion[]{
+        constructFromConfig("MOD_HUNGER_CLOUD",
                 MobEffects.HUNGER,
+                "EnableHungerCloudModifier",
+                "Enable the hunger causing cloud.  Mobs with this effect create lingering clouds of the hunger potion effect.",
+                3,
+                5,
+                1.0d,
+                returns,
+                config);
+
+        constructFromConfig("MOD_MININGFATIGUE_CLOUD",
                 MobEffects.MINING_FATIGUE,
-                MobEffects.SLOWNESS,
-                MobEffects.WEAKNESS,
-                MobEffects.BLINDNESS,
-                MobEffects.LEVITATION,
-                MobEffects.NAUSEA
-                ,
-        };
+                "EnableMiningFatigueCloudModifier",
+                "Enable the mining fatigue causing cloud.  Mobs with this effect create lingering clouds of the mining fatigue potion effect.",
+                3,
+                5,
+                1.0d,
+                returns,
+                config);
+
+        constructFromConfig("MOD_NAUSEA_CLOUD",
+                MobEffects.NAUSEA,
+                "EnableNauseaCloudModifier",
+                "Enable the nausea causing cloud.  Mobs with this effect create lingering clouds of the nausea potion effect.",
+                1,
+                15,
+                1.0d,
+                returns,
+                config);
+
+        /* if we ever get a way to cancel potion applied effects, could do these too
+        MobEffects.SLOWNESS
+        MobEffects.WEAKNESS
+        MobEffects.BLINDNESS
+        MobEffects.LEVITATION
+        */
 
         return returns;
     };

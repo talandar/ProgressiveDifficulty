@@ -61,7 +61,7 @@ public class AdvancementControl extends DifficultyControl {
                 "EnableAdvancementsAffectDifficulty", true, "Difficulty is added based on advancements the player has.");
         boolean achievementsAddDifficulty = playerAchievementsAffectDifficultyProp.getBoolean();
         Property achievementValueMapProp = config.get(IDENTIFIER,
-                "AdvancementValues", new String[]{}, "List of advancements and the difficulty they add.");
+                "AdvancementValues", new String[]{}, "List of advancements and the difficulty they add.  Strings should be of the form \"advancementid:value\"");
         String[] achieveMap = achievementValueMapProp.getStringList();
         Property multiplePlayerComboTypeProp = config.get(IDENTIFIER,
                 "MultiplePlayerCombinationType",MultiplePlayerCombineType.AVERAGE.toString(),
