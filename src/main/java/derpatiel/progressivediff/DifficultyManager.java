@@ -214,6 +214,7 @@ public class DifficultyManager {
         registerModifier(WeakGazeModifier.getFromConfig);
         registerModifier(FatigueGazeModifier.getFromConfig);
         registerModifier(OnHitEffectModifier.getFromConfig);
+        registerModifier(PotionCloudModifier.getFromConfig);
     }
 
     public static boolean shouldModifyEntity(EntityLivingBase entity){

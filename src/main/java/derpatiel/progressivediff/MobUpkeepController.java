@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class MobUpkeepController {
 
-    private static final int UPKEEP_INTERVAL = 10;//upkeep every half second
+    public static final int UPKEEP_INTERVAL = 10;//upkeep every half second
     public static final int POTION_EFFECT_LENGTH = 15;//.75 second potion effect length (a tiny bit longer than the upkeep, in case of lag or something)
 
     private static int upkeepCount=0;

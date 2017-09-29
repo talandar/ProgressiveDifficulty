@@ -1,11 +1,10 @@
 package derpatiel.progressivediff;
 
 import derpatiel.progressivediff.api.DifficultyModifier;
+import derpatiel.progressivediff.modifiers.PotionCloudModifier;
 import derpatiel.progressivediff.util.ChatUtil;
 import derpatiel.progressivediff.util.LOG;
 import derpatiel.progressivediff.util.MobNBTHandler;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -88,6 +87,10 @@ public class EventHandler {
                     LOG.warn("\tCaught Exception had message "+e.getMessage());
                 }
             }
+        }else if(causeMob!=null
+                && causeMob.equals(event.getEntity())
+                && event.getSource().getImmediateSource() instanceof PotionCloudModifier.PlayerEffectingOnlyEntityAreaEffectCloud){
+            event.setCanceled(true);
         }
 
     }
