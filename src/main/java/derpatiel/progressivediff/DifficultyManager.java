@@ -9,9 +9,8 @@ import derpatiel.progressivediff.controls.*;
 import derpatiel.progressivediff.modifiers.*;
 import derpatiel.progressivediff.util.LOG;
 import net.minecraft.command.CommandTitle;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.*;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -22,6 +21,9 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -48,6 +50,7 @@ public class DifficultyManager {
     public static boolean debugLogSpawns = false;
     public static boolean isBlacklistMode = true;
     public static final List<String> mobBlackWhiteList = Lists.newArrayList();
+    public static boolean useIMobFilter = true;
 
     private static String[] defaultBlacklist = new String[]{
             "Donkey",
@@ -130,6 +133,9 @@ public class DifficultyManager {
             Property mobListProp = defaultConfig.get(Configuration.CATEGORY_GENERAL,"MobList",defaultBlacklist,"List of mobs, either blacklist or whitelisted for modification by this mod.  See BlacklistMode.");
             mobBlackWhiteList.clear();
             mobBlackWhiteList.addAll(Sets.newHashSet(mobListProp.getStringList()));
+
+            Property iMobFilterProp = defaultConfig.get(Configuration.CATEGORY_GENERAL,"UseIMobFilter",true,"Only modify creatures that implement the IMob interface.  You almost certainly want this, unless a modded mob is not being modified.  This allows easy filtering of passive mobs.  If you set this to false, make sure you add all passive mobs to the blacklist!");
+            useIMobFilter = iMobFilterProp.getBoolean();
 
             enabled=controlEnabled;
             if (!controlEnabled) {
@@ -220,6 +226,8 @@ public class DifficultyManager {
     public static boolean shouldModifyEntity(EntityLivingBase entity){
         if(entity==null || !entity.isNonBoss() || entity instanceof EntityPlayer)
             return false;
+        if(useIMobFilter && !(entity instanceof IMob))
+            return false;
         if(mobBlackWhiteList.contains(EntityList.getEntityString(entity))){
             return !isBlacklistMode;
         }
@@ -239,6 +247,20 @@ public class DifficultyManager {
             if(difficulty<0 && homeRegion.doesNegativeDifficultyPreventSpawn()){
                 int chance = joinWorldEvent.getWorld().rand.nextInt(100);
                 if(Math.abs(difficulty)>=chance){
+                    if(mobToSpawn.isBeingRidden() || mobToSpawn.isRiding()){
+                        LOG.info("RIDER!: "+mobToSpawn.getClass());
+                    }
+                    //also remove anything riding or being ridden (zombies on chickens, skeletons on spiders)
+                    if(mobToSpawn.isBeingRidden()){
+                        for(Entity passenger : mobToSpawn.getPassengers()) {
+                            passenger.setDropItemsWhenDead(false);
+                            passenger.setDead();
+                        }
+                    } else if(mobToSpawn.isRiding()){
+                        Entity mount = mobToSpawn.getRidingEntity();
+                        mount.setDropItemsWhenDead(false);
+                        mount.setDead();
+                    }
                     joinWorldEvent.setCanceled(true);
                     return;
                 }

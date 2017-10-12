@@ -63,7 +63,7 @@ public class PotionCloudModifier extends DifficultyModifier {
     private void spawnLingeringCloud(int amplifier, EntityLiving mob) {
 
         PlayerEffectingOnlyEntityAreaEffectCloud entityareaeffectcloud = new PlayerEffectingOnlyEntityAreaEffectCloud(mob.world, mob.posX, mob.posY, mob.posZ);
-        entityareaeffectcloud.setRadius(2.5F);
+        entityareaeffectcloud.setRadius(3.5F);
         entityareaeffectcloud.setRadiusOnUse(-0.5F);
         entityareaeffectcloud.setWaitTime(10);
         entityareaeffectcloud.setDuration(MobUpkeepController.POTION_EFFECT_LENGTH);//TODO is this a good time?
@@ -76,6 +76,7 @@ public class PotionCloudModifier extends DifficultyModifier {
     public static Function<Configuration,List<DifficultyModifier>> getFromConfig = config -> {
         List<DifficultyModifier> returns = Lists.newArrayList();
 
+        /*
         constructFromConfig("MOD_DAMAGE_CLOUD",
                 MobEffects.INSTANT_DAMAGE,
                 "EnableDamageCloudModifier",

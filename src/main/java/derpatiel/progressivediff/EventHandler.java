@@ -8,12 +8,14 @@ import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -67,6 +69,13 @@ public class EventHandler {
     }
 
     @SubscribeEvent
+    public void onEndermanTeleport(EnderTeleportEvent event){
+        if(event.getEntity() instanceof EntityEnderman){
+            event.getAttackDamage();
+        }
+    }
+
+    @SubscribeEvent
     public void onLivingAttack(LivingAttackEvent event){
         Entity causeMob = event.getSource().getTrueSource();
         if(causeMob instanceof EntityLiving
@@ -87,9 +96,8 @@ public class EventHandler {
                     LOG.warn("\tCaught Exception had message "+e.getMessage());
                 }
             }
-        }else if(causeMob!=null
-                && causeMob.equals(event.getEntity())
-                && event.getSource().getImmediateSource() instanceof PotionCloudModifier.PlayerEffectingOnlyEntityAreaEffectCloud){
+        }else if(event.getSource().getImmediateSource() instanceof PotionCloudModifier.PlayerEffectingOnlyEntityAreaEffectCloud
+                && !(event.getEntity() instanceof EntityPlayer)){
             event.setCanceled(true);
         }
 
