@@ -7,6 +7,4 @@ public class SpawnEventDetails {
 
     public EntityLiving entity;
     public boolean fromSpawner=false;
-
-    public LivingSpawnEvent.CheckSpawn spawnEvent;
 }

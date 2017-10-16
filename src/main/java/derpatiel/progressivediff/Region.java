@@ -289,9 +289,7 @@ public class Region implements Comparable<Region>{
         if(DifficultyManager.debugLogSpawns) {
             LOG.info(log);
         }
-        if(thisSpawnModifiers.size()>0) {
-            MobNBTHandler.setChangeMap(entity,getName(),thisSpawnModifiers);
-        }
+        MobNBTHandler.setChangeMap(entity,getName(),thisSpawnModifiers);
     }
 
     public int getDimensionId(){

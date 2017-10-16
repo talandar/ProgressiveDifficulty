@@ -90,7 +90,6 @@ public class ServerCommand extends CommandBase {
             fakeSpawned.setPosition(sender.getPosition().getX(),sender.getPosition().getY(),sender.getPosition().getZ());
             SpawnEventDetails fakeDetails = new SpawnEventDetails();
             fakeDetails.fromSpawner=false;
-            fakeDetails.spawnEvent=null;
             fakeDetails.entity = (EntityLiving) fakeSpawned;
             Map<String, Integer> difficultyDetails = Maps.newHashMap();
             try {
@@ -117,8 +116,8 @@ public class ServerCommand extends CommandBase {
             sendChat(sender, new String[]{"Killing all modified mobs in this dimension."});
             MobNBTHandler.getModifiedEntities(sender.getEntityWorld()).stream().forEach(mob->mob.setDead());
         }else if(args[0].equalsIgnoreCase("killmobs")) {
-            sendChat(sender, new String[]{"Killing all mobs in this dimension."});
-            sender.getEntityWorld().getEntities(EntityLiving.class, (entity) -> !entity.isDead).stream().forEach(mob -> mob.setDead());
+            sendChat(sender, new String[]{"Killing all non-blacklisted in this dimension."});
+            sender.getEntityWorld().getEntities(EntityLiving.class, (entity) -> !entity.isDead && DifficultyManager.shouldModifyEntity(entity)).stream().forEach(mob -> mob.setDead());
         }else if(args[0].equalsIgnoreCase("region")) {
             Region currentRegion = DifficultyManager.getRegionForPosition(sender.getEntityWorld().provider.getDimension(),sender.getPosition());
             sendChat(sender, new String[]{"Currently in region "+currentRegion.getName()});

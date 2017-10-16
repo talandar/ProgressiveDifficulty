@@ -69,13 +69,6 @@ public class EventHandler {
     }
 
     @SubscribeEvent
-    public void onEndermanTeleport(EnderTeleportEvent event){
-        if(event.getEntity() instanceof EntityEnderman){
-            event.getAttackDamage();
-        }
-    }
-
-    @SubscribeEvent
     public void onLivingAttack(LivingAttackEvent event){
         Entity causeMob = event.getSource().getTrueSource();
         if(causeMob instanceof EntityLiving

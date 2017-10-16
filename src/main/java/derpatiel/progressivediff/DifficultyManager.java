@@ -8,6 +8,7 @@ import derpatiel.progressivediff.api.DifficultyModifier;
 import derpatiel.progressivediff.controls.*;
 import derpatiel.progressivediff.modifiers.*;
 import derpatiel.progressivediff.util.LOG;
+import derpatiel.progressivediff.util.MobNBTHandler;
 import net.minecraft.command.CommandTitle;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.IMob;
@@ -180,12 +181,10 @@ public class DifficultyManager {
     public static void onCheckSpawnEvent(LivingSpawnEvent.CheckSpawn checkSpawnEvent) {
         if(enabled) {
             SpawnEventDetails details = new SpawnEventDetails();
-            if (shouldModifyEntity(checkSpawnEvent.getEntityLiving())) {
-                details.entity = (EntityLiving) checkSpawnEvent.getEntityLiving();
-                details.spawnEvent = checkSpawnEvent;
-                details.fromSpawner = checkSpawnEvent.isSpawner();
-                eventsThisTickByDimension.computeIfAbsent(details.entity.world.provider.getDimension(), thing -> new HashMap<>()).put(details.entity, details);
-            }
+            details.entity = (EntityLiving) checkSpawnEvent.getEntityLiving();
+            details.fromSpawner = checkSpawnEvent.isSpawner();
+            eventsThisTickByDimension.computeIfAbsent(details.entity.world.provider.getDimension(), thing -> new HashMap<>()).put(details.entity, details);
+
         }
     }
 
@@ -238,36 +237,42 @@ public class DifficultyManager {
         //we actually got to this step, so lets do something with it.
         //note: we check this conversion up in the caller of this class.  should be safe.
         EntityLiving mobToSpawn = (EntityLiving) joinWorldEvent.getEntity();
+        if (MobNBTHandler.isModifiedMob(mobToSpawn) || !shouldModifyEntity(mobToSpawn))
+            return;
         SpawnEventDetails details = eventsThisTickByDimension.computeIfAbsent(joinWorldEvent.getEntity().world.provider.getDimension(), thing -> new HashMap<>()).get(mobToSpawn);
-        if (details != null) {
-            //find region
-            int dimension = joinWorldEvent.getWorld().provider.getDimension();
-            Region homeRegion = getRegionForPosition(dimension,joinWorldEvent.getEntity().getPosition());
-            int difficulty = homeRegion.determineDifficultyForSpawnEvent(details);
-            if(difficulty<0 && homeRegion.doesNegativeDifficultyPreventSpawn()){
-                int chance = joinWorldEvent.getWorld().rand.nextInt(100);
-                if(Math.abs(difficulty)>=chance){
-                    if(mobToSpawn.isBeingRidden() || mobToSpawn.isRiding()){
-                        LOG.info("RIDER!: "+mobToSpawn.getClass());
-                    }
-                    //also remove anything riding or being ridden (zombies on chickens, skeletons on spiders)
-                    if(mobToSpawn.isBeingRidden()){
-                        for(Entity passenger : mobToSpawn.getPassengers()) {
-                            passenger.setDropItemsWhenDead(false);
-                            passenger.setDead();
-                        }
-                    } else if(mobToSpawn.isRiding()){
-                        Entity mount = mobToSpawn.getRidingEntity();
-                        mount.setDropItemsWhenDead(false);
-                        mount.setDead();
-                    }
-                    joinWorldEvent.setCanceled(true);
-                    return;
+        if (details == null) {//skipped an earlier check for some reason.  Give it defaults.
+            details = new SpawnEventDetails();
+            details.entity = mobToSpawn;
+            details.fromSpawner = false;
+        }
+
+        //find region
+        int dimension = joinWorldEvent.getWorld().provider.getDimension();
+        Region homeRegion = getRegionForPosition(dimension, joinWorldEvent.getEntity().getPosition());
+        int difficulty = homeRegion.determineDifficultyForSpawnEvent(details);
+        if (difficulty < 0 && homeRegion.doesNegativeDifficultyPreventSpawn()) {
+            int chance = joinWorldEvent.getWorld().rand.nextInt(100);
+            if (Math.abs(difficulty) >= chance) {
+                if (mobToSpawn.isBeingRidden() || mobToSpawn.isRiding()) {
+                    LOG.info("RIDER!: " + mobToSpawn.getClass());
                 }
+                //also remove anything riding or being ridden (zombies on chickens, skeletons on spiders)
+                if (mobToSpawn.isBeingRidden()) {
+                    for (Entity passenger : mobToSpawn.getPassengers()) {
+                        passenger.setDropItemsWhenDead(false);
+                        passenger.setDead();
+                    }
+                } else if (mobToSpawn.isRiding()) {
+                    Entity mount = mobToSpawn.getRidingEntity();
+                    mount.setDropItemsWhenDead(false);
+                    mount.setDead();
+                }
+                joinWorldEvent.setCanceled(true);
+                return;
             }
-            if(difficulty>=homeRegion.getThreshold()) {
-                homeRegion.makeDifficultyChanges(mobToSpawn, difficulty, joinWorldEvent.getWorld().rand);
-            }
+        }
+        if (difficulty >= homeRegion.getThreshold()) {
+            homeRegion.makeDifficultyChanges(mobToSpawn, difficulty, joinWorldEvent.getWorld().rand);
         }
     }
 
