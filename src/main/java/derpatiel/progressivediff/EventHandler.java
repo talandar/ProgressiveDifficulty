@@ -36,7 +36,7 @@ public class EventHandler {
     //occurs for every spawn.  Including ones that are later canceled for light or similar.
     @SubscribeEvent
     public void onEntityCheckSpawn(LivingSpawnEvent.CheckSpawn checkSpawnEvent){
-        if(checkSpawnEvent.getEntityLiving() instanceof  EntityLiving) {
+        if(DifficultyManager.enabled && checkSpawnEvent.getEntityLiving() instanceof  EntityLiving) {
             DifficultyManager.onCheckSpawnEvent(checkSpawnEvent);
         }
     }
@@ -45,14 +45,14 @@ public class EventHandler {
     public void onJoinWorld(EntityJoinWorldEvent joinWorldEvent){
         //only catch if its EntityLiving - not a player but is a living entity
         //this lets us skip things like fallingsand entities, arrows, fx, etc
-        if(joinWorldEvent.getEntity() instanceof EntityLiving) {
+        if(DifficultyManager.enabled && joinWorldEvent.getEntity() instanceof EntityLiving) {
             DifficultyManager.onJoinWorldEvent(joinWorldEvent);
         }
     }
 
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event){
-        if(ProgressiveDifficulty.oldConfigExists){
+        if(DifficultyManager.enabled && ProgressiveDifficulty.oldConfigExists){
             TextComponentString linkComponent = new TextComponentString("[Progressive Difficulty Wiki]");
             ITextComponent[] chats = new ITextComponent[]{
                     new TextComponentString("[ProgressiveDifficulty] It looks like you have a version 1.0 " +
@@ -70,35 +70,38 @@ public class EventHandler {
 
     @SubscribeEvent
     public void onLivingAttack(LivingAttackEvent event){
-        Entity causeMob = event.getSource().getTrueSource();
-        if(causeMob instanceof EntityLiving
-                && event.getEntity() instanceof EntityPlayer
-                && MobNBTHandler.isModifiedMob((EntityLiving)causeMob)){
-            Map<String,Integer> changes = MobNBTHandler.getChangeMap((EntityLiving)causeMob);
-            String regionName = MobNBTHandler.getEntityRegion((EntityLiving)causeMob);
-            Region mobRegion = DifficultyManager.getRegionByName(regionName);
-            String mobId = EntityList.getEntityString(causeMob);
-            for(String change : changes.keySet()){
-                try {
-                    DifficultyModifier modifier = mobRegion.getModifierForMobById(mobId,change);
-                    if (modifier != null) {
-                        modifier.handleDamageEvent(event);
+        if(DifficultyManager.enabled) {
+            Entity causeMob = event.getSource().getTrueSource();
+            if (causeMob instanceof EntityLiving
+                    && event.getEntity() instanceof EntityPlayer
+                    && MobNBTHandler.isModifiedMob((EntityLiving) causeMob)) {
+                Map<String, Integer> changes = MobNBTHandler.getChangeMap((EntityLiving) causeMob);
+                String regionName = MobNBTHandler.getEntityRegion((EntityLiving) causeMob);
+                Region mobRegion = DifficultyManager.getRegionByName(regionName);
+                String mobId = EntityList.getEntityString(causeMob);
+                for (String change : changes.keySet()) {
+                    try {
+                        DifficultyModifier modifier = mobRegion.getModifierForMobById(mobId, change);
+                        if (modifier != null) {
+                            modifier.handleDamageEvent(event);
+                        }
+                    } catch (Exception e) {
+                        LOG.warn("Error applying modifier at onLivingAttack.  Mob was " + causeMob.getName() + ", Modifier was " + change + ".  Please report to Progressive Difficulty Developer!");
+                        LOG.warn("\tCaught Exception had message " + e.getMessage());
                     }
-                }catch(Exception e){
-                    LOG.warn("Error applying modifier at onLivingAttack.  Mob was "+causeMob.getName()+", Modifier was "+change+".  Please report to Progressive Difficulty Developer!");
-                    LOG.warn("\tCaught Exception had message "+e.getMessage());
                 }
+            } else if (event.getSource().getImmediateSource() instanceof PotionCloudModifier.PlayerEffectingOnlyEntityAreaEffectCloud
+                    && !(event.getEntity() instanceof EntityPlayer)) {
+                event.setCanceled(true);
             }
-        }else if(event.getSource().getImmediateSource() instanceof PotionCloudModifier.PlayerEffectingOnlyEntityAreaEffectCloud
-                && !(event.getEntity() instanceof EntityPlayer)){
-            event.setCanceled(true);
         }
-
     }
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event){
-        DifficultyManager.onWorldTick(event.world.provider.getDimension());
-        MobUpkeepController.tick(event.world);
+        if(DifficultyManager.enabled) {
+            DifficultyManager.onWorldTick(event.world.provider.getDimension());
+            MobUpkeepController.tick(event.world);
+        }
     }
 }

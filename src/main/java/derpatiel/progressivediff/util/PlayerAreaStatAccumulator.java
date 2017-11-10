@@ -61,6 +61,13 @@ public class PlayerAreaStatAccumulator {
     }
 
     public static int getStatForPlayersInArea(MultiplePlayerCombineType type, StatBase stat, EntityLiving entity, int radius) {
-        return getStatForPlayersInArea(type,entity,radius, (player)->player.getStatFile().readStat(stat));
+        return getStatForPlayersInArea(type,entity,radius, (player)->{
+            try {
+                return player.getStatFile().readStat(stat);
+            }catch(Exception e){
+                //catch a case where the stat is not defined
+                return 0;
+            }
+        });
     }
 }

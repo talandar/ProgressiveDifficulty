@@ -14,6 +14,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.apache.commons.lang3.builder.Diff;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -235,7 +236,14 @@ public class Region implements Comparable<Region>{
         String mobId = EntityList.getEntityString(details.entity);
         RegionMobConfig mobConfig = getConfigForMob(mobId);
         for(DifficultyControl control : mobConfig.controls){
-            difficulty+=control.getChangeForSpawn(details);
+            try {
+                difficulty += control.getChangeForSpawn(details);
+            }catch (Exception e){
+                if(DifficultyManager.debugLogSpawns){
+                    LOG.warn("A control misbehaved: "+control.getIdentifier());
+                    LOG.warn("  Issue was: "+e.getMessage());
+                }
+            }
         }
         return difficulty;
     }
@@ -247,7 +255,16 @@ public class Region implements Comparable<Region>{
         String mobId = EntityList.getEntityString(spawnDetails.entity);
         RegionMobConfig mobConfig = getConfigForMob(mobId);
         for(DifficultyControl control : mobConfig.controls){
-            details.put(control.getIdentifier(),control.getChangeForSpawn(spawnDetails));
+            int difficulty = 0;
+            try {
+                difficulty += control.getChangeForSpawn(spawnDetails);
+            }catch (Exception e){
+                if(DifficultyManager.debugLogSpawns){
+                    LOG.warn("A control misbehaved: "+control.getIdentifier());
+                    LOG.warn("  Issue was: "+e.getMessage());
+                }
+            }
+            details.put(control.getIdentifier(),difficulty);
         }
         return details;
     }
